@@ -17,18 +17,18 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 
-public class ChronicleBasedEventStore implements IEventStore {
+public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     private String chronicleBasePath;
     private IndexedChronicle chronicle;
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
     private Object writeLock;
 
-    private BiMap<Class<?>, Byte> mapping;
-    private Map<Class<?>, Function<?, byte[]>> serializers;
-    private Map<Byte, Function<byte[], ?>> deserializers;
+    private BiMap<Class<T>, Byte> mapping;
+    private Map<Class<T>, Function<T, byte[]>> serializers;
+    private Map<Byte, Function<byte[], T>> deserializers;
 
 
-    public ChronicleBasedEventStore(@NotNull String chronicleBasePath, Map<Class<?>, Function<?, byte[]>> serializers, Map<Class<?>, Function<byte[], ?>> deserializers) throws FileNotFoundException, IllegalArgumentException {
+    public ChronicleBasedEventStore(@NotNull String chronicleBasePath, Map<Class<T>, Function<T, byte[]>> serializers, Map<Class<T>, Function<byte[], T>> deserializers) throws FileNotFoundException, IllegalArgumentException {
         this.chronicleBasePath = chronicleBasePath;
         this.writeLock = new Object();
         chronicle = new IndexedChronicle(chronicleBasePath);
@@ -41,13 +41,13 @@ public class ChronicleBasedEventStore implements IEventStore {
 
     }
 
-    private void buildMaps(Map<Class<?>, Function<?, byte[]>> serializers, Map<Class<?>, Function<byte[], ?>> deserializers) {
+    private void buildMaps(Map<Class<T>, Function<T, byte[]>> serializers, Map<Class<T>, Function<byte[], T>> deserializers) {
         mapping = HashBiMap.create();
         this.serializers = serializers;
-        this.deserializers = new HashMap<Byte, Function<byte[], ?>>();
+        this.deserializers = new HashMap<Byte, Function<byte[], T>>();
 
         byte b = 0;
-        for (Map.Entry<Class<?>, Function<byte[], ?>> entry : deserializers.entrySet()) {
+        for (Map.Entry<Class<T>, Function<byte[], T>> entry : deserializers.entrySet()) {
             mapping.put(entry.getKey(),b);
             this.deserializers.put(b, entry.getValue());
             b++;
@@ -55,10 +55,10 @@ public class ChronicleBasedEventStore implements IEventStore {
     }
 
     @Override
-    public <T> void storeEvent(@NotNull T object) throws IOException {
+    public void storeEvent(@NotNull T object) throws IOException {
         synchronized (writeLock) {
             ExcerptAppender appender = chronicle.createAppender();
-            Function<T, byte[]> serializer = (Function<T, byte[]>) serializers.get(object.getClass());
+            Function<T, byte[]> serializer = serializers.get(object.getClass());
             try {
                 byte[] serialized = serializer.apply(object);
                 appender.startExcerpt(serialized.length + TIMESTAMP_SIZE + Byte.SIZE + Integer.SIZE);
@@ -73,17 +73,17 @@ public class ChronicleBasedEventStore implements IEventStore {
     }
 
     @Override
-    public Iterator<IEventContainer<?>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
+    public Iterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
         return new LimitedEventIterator(fromTime,toTime);
     }
 
     @Override
-    public Iterator<IEventContainer<?>> getEventsFromTimestamp(long fromTime) throws IOException {
+    public Iterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException {
         return new InfiniteEventIterator(fromTime);
     }
 
     @Override
-    public Iterator<IEventContainer<?>> getAllEvents() throws IOException {
+    public Iterator<IEventContainer<T>> getAllEvents() throws IOException {
         return new InfiniteEventIterator(0);
     }
 
@@ -97,7 +97,7 @@ public class ChronicleBasedEventStore implements IEventStore {
         }
     }
 
-    private abstract class AbstractEventIterator implements java.util.Iterator<IEventContainer<?>> {
+    private abstract class AbstractEventIterator<T> implements java.util.Iterator<IEventContainer<T>> {
         protected ExcerptTailer reader;
         protected IEventContainer next;
 
@@ -128,7 +128,7 @@ public class ChronicleBasedEventStore implements IEventStore {
             return false;
         }
 
-        protected abstract IEventContainer<?> readNextEvent();
+        protected abstract IEventContainer<T> readNextEvent();
 
 
         @Override
@@ -137,9 +137,9 @@ public class ChronicleBasedEventStore implements IEventStore {
         }
 
         @Override
-        public IEventContainer<?> next() {
+        public IEventContainer<T> next() {
             if (next != null) {
-                IEventContainer<?> event = next;
+                IEventContainer<T> event = next;
                 next = readNextEvent();
                 return event;
             }
@@ -161,14 +161,14 @@ public class ChronicleBasedEventStore implements IEventStore {
         }
 
         @Override
-        protected IEventContainer<?> readNextEvent() {
+        protected IEventContainer<T> readNextEvent() {
             if (reader.nextIndex()) {
                 long timestamp = reader.readLong();
                 byte type = reader.readByte();
                 byte[] event = new byte[(int) reader.remaining()];
                 reader.readFully(event);
-                Object object = deserializers.get(type).apply(event);
-                return new DefaultEventContainer(object, timestamp);
+                T object = deserializers.get(type).apply(event);
+                return new DefaultEventContainer<T>(object, timestamp);
             }
             reader.finish();
             return null;
@@ -186,7 +186,7 @@ public class ChronicleBasedEventStore implements IEventStore {
         }
 
         @Override
-        protected IEventContainer<?> readNextEvent() {
+        protected IEventContainer<T> readNextEvent() {
             if (reader.nextIndex()) {
                 long timestamp = reader.readLong();
                 if (timestamp > toTime) {
@@ -196,8 +196,8 @@ public class ChronicleBasedEventStore implements IEventStore {
                 byte type = reader.readByte();
                 byte[] event = new byte[(int) reader.remaining()];
                 reader.readFully(event);
-                Object object = deserializers.get(type).apply(event);
-                return new DefaultEventContainer(object, timestamp);
+                T object = deserializers.get(type).apply(event);
+                return new DefaultEventContainer<T>(object, timestamp);
             }
             reader.finish();
             return null;

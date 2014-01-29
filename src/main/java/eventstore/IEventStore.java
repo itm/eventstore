@@ -10,14 +10,14 @@ import java.util.Iterator;
 /**
  * This interface contains all methods needed for using the event store
  */
-public interface IEventStore {
+public interface IEventStore<T> {
 
     /**
      * Method for storing an object
      * @param object an object to store
      * @throws  java.io.IOException if the stream is broken or the event couldn't be serialized
      */
-    public <T> void storeEvent(@NotNull T object) throws IOException;
+    public void storeEvent(@NotNull T object) throws IOException;
 
     /**
      * Getting an iterator for events between two timestamps
@@ -26,7 +26,7 @@ public interface IEventStore {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    public Iterator<IEventContainer<?>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
+    public Iterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
 
     /**
      * Getting an iterator for events from a given timestamp until the last event in the storage
@@ -34,7 +34,7 @@ public interface IEventStore {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    public Iterator<IEventContainer<?>> getEventsFromTimestamp(long fromTime) throws IOException;
+    public Iterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
 
 
     /**
@@ -42,7 +42,7 @@ public interface IEventStore {
      * @return an iterator for sequential read access starting with the first event in the storage
      * @throws IOException if the underlying stream is broken
      */
-    public Iterator<IEventContainer<?>> getAllEvents() throws IOException;
+    public Iterator<IEventContainer<T>> getAllEvents() throws IOException;
 
 
     /**

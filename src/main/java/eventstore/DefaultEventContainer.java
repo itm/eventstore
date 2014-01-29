@@ -3,7 +3,7 @@ package eventstore;
 /**
  * Created by Tobi on 29.01.14.
  */
-public class DefaultEventContainer<T> implements IEventContainer{
+public class DefaultEventContainer<T> implements IEventContainer<T>{
     private T event;
     private long timestamp;
 

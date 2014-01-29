@@ -18,10 +18,9 @@ import java.util.NoSuchElementException;
 
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
-    private String chronicleBasePath;
     private IndexedChronicle chronicle;
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
-    private Object writeLock;
+    private final Object writeLock;
 
     private BiMap<Class<T>, Byte> mapping;
     private Map<Class<T>, Function<T, byte[]>> serializers;
@@ -29,7 +28,6 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
 
     public ChronicleBasedEventStore(@NotNull String chronicleBasePath, Map<Class<T>, Function<T, byte[]>> serializers, Map<Class<T>, Function<byte[], T>> deserializers) throws FileNotFoundException, IllegalArgumentException {
-        this.chronicleBasePath = chronicleBasePath;
         this.writeLock = new Object();
         chronicle = new IndexedChronicle(chronicleBasePath);
         if (deserializers.size() != serializers.size() || serializers.size() > 256) {
@@ -58,12 +56,14 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     public void storeEvent(@NotNull T object) throws IOException {
         synchronized (writeLock) {
             ExcerptAppender appender = chronicle.createAppender();
-            Function<T, byte[]> serializer = serializers.get(object.getClass());
+            // Object is of type T, so Class is Class<T>. No need to check!
+            @SuppressWarnings("unchecked") Class<T> c = (Class<T>) object.getClass();
+            Function<T, byte[]> serializer = serializers.get(c);
             try {
                 byte[] serialized = serializer.apply(object);
                 appender.startExcerpt(serialized.length + TIMESTAMP_SIZE + Byte.SIZE + Integer.SIZE);
                 appender.writeLong(System.currentTimeMillis());
-                appender.writeByte(mapping.get(object.getClass()));
+                appender.writeByte(mapping.get(c));
                 appender.write(serialized);
                 appender.finish();
             } catch (NullPointerException e) {
@@ -97,9 +97,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
     }
 
-    private abstract class AbstractEventIterator<T> implements java.util.Iterator<IEventContainer<T>> {
+    private abstract class AbstractEventIterator implements java.util.Iterator<IEventContainer<T>> {
         protected ExcerptTailer reader;
-        protected IEventContainer next;
+        protected IEventContainer<T> next;
 
         public AbstractEventIterator(long fromTime) throws IOException {
             reader = chronicle.createTailer();
@@ -110,7 +110,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             }
         }
 
-        protected boolean windToTimestamp(long timestamp) {
+        private boolean windToTimestamp(long timestamp) {
             long firstTimestamp;
             while (reader.nextIndex()) {
                 firstTimestamp = reader.readLong();
@@ -118,10 +118,10 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                     byte type = reader.readByte();
                     byte[] event = new byte[(int) reader.remaining()];
                     reader.readFully(event);
-                    Function<byte[], ?> decoder = deserializers.get(type);
-                    Object object = decoder.apply(event);
+                    Function<byte[], T> decoder = deserializers.get(type);
+                    T object = decoder.apply(event);
 
-                    next = new DefaultEventContainer(object, timestamp);
+                    next = new DefaultEventContainer<T>(object, timestamp);
                     return true;
                 }
             }

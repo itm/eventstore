@@ -1,33 +1,33 @@
 package firststeps;
 
-/**
- * Created by Tobi on 16.01.14.
- */
 public class TestConfiguration {
-    private int dataSize;
-    private int iterations;
-    private long sleepTimeInMs;
 
-    public TestConfiguration(int dataSize, int iterations, long sleepTimeInMs) {
-        this.dataSize = dataSize;
-        this.iterations = iterations;
-        this.sleepTimeInMs = sleepTimeInMs;
-    }
+	private int dataSize;
 
-    public int getDataSize() {
-        return dataSize;
-    }
+	private int iterations;
 
-    public int getIterations() {
-        return iterations;
-    }
+	private long sleepTimeInMs;
 
-    public long getSleepTimeInMs() {
-        return sleepTimeInMs;
-    }
+	public TestConfiguration(int dataSize, int iterations, long sleepTimeInMs) {
+		this.dataSize = dataSize;
+		this.iterations = iterations;
+		this.sleepTimeInMs = sleepTimeInMs;
+	}
 
-    @Override
-    public String toString() {
-        return "test-"+dataSize+"-"+iterations+"-"+sleepTimeInMs;
-    }
+	public int getDataSize() {
+		return dataSize;
+	}
+
+	public int getIterations() {
+		return iterations;
+	}
+
+	public long getSleepTimeInMs() {
+		return sleepTimeInMs;
+	}
+
+	@Override
+	public String toString() {
+		return "test-" + dataSize + "-" + iterations + "-" + sleepTimeInMs;
+	}
 }

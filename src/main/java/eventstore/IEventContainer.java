@@ -5,6 +5,7 @@ package eventstore;
  */
 public interface IEventContainer<T> {
 
-    public T getEvent();
-    public long getTimestamp();
+	public T getEvent();
+
+	public long getTimestamp();
 }

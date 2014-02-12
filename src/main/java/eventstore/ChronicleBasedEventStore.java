@@ -145,6 +145,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
 		@Override
 		public boolean hasNext() {
+            if(next == null) {
+                next = readNextEvent();
+            }
 			return next != null;
 		}
 

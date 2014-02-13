@@ -69,7 +69,28 @@
       <file leaf-file-name="ChronicleBasedEventStore.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="148" column="39" selection-start="4493" selection-end="4493" vertical-scroll-proportion="0.075642966" vertical-offset="1960" max-vertical-offset="3225">
+            <state line="114" column="16" selection-start="3993" selection-end="3993" vertical-scroll-proportion="2.2922251" vertical-offset="0" max-vertical-offset="3570">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2382#2412#1" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Object.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Object.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="63" column="29" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8055">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Class.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Class.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="115" column="10" selection-start="3579" selection-end="3579" vertical-scroll-proportion="0.0" vertical-offset="755" max-vertical-offset="45765">
               <folding />
             </state>
           </provider>
@@ -96,7 +117,7 @@
       <file leaf-file-name="IEventStore.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="7" selection-start="416" selection-end="416" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1095">
+            <state line="22" column="80" selection-start="561" selection-end="561" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1095">
               <folding />
             </state>
           </provider>
@@ -105,7 +126,7 @@
       <file leaf-file-name="ChronicleBasedEventStorePerformanceTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStorePerformanceTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="100" column="23" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.0" vertical-offset="1500" max-vertical-offset="1905">
+            <state line="100" column="23" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1665">
               <folding />
             </state>
           </provider>
@@ -114,7 +135,7 @@
       <file leaf-file-name="ChronicleBasedEventStoreTest.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="0" selection-start="610" selection-end="2034" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="4035">
+            <state line="48" column="9" selection-start="1323" selection-end="1323" vertical-scroll-proportion="0.0" vertical-offset="120" max-vertical-offset="3855">
               <folding />
             </state>
           </provider>
@@ -148,9 +169,9 @@
         <option value="$PROJECT_DIR$/src/main/java/eventstore/IEventContainer.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java" />
         <option value="$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStorePerformanceTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java" />
         <option value="$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java" />
       </list>
     </option>
@@ -163,9 +184,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
     <option name="width" value="1920" />
-    <option name="height" value="1131" />
+    <option name="height" value="1200" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -294,28 +314,6 @@
               <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TestbedEventStore" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="FastEventStore" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="eventstore" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -337,7 +335,7 @@
     <property name="OverrideImplement.combined" value="true" />
     <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="LayoutCode.rearrangeEntriesJava" value="false" />
-    <property name="FullScreen" value="false" />
+    <property name="FullScreen" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
@@ -494,19 +492,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -532,6 +517,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -638,7 +636,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1920" height="1131" extended-state="6" />
+    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -648,24 +646,50 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32956687" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32870772" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13489583" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="1073" y="161" width="480" height="712" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13489583" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="1073" y="161" width="480" height="712" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32870772" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="100" y="122" width="1720" height="931" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992467" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="100" y="122" width="1720" height="931" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32870772" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13489583" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="1073" y="161" width="480" height="712" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992467" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-    </layout>
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32870772" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -688,20 +712,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="1" selection-start="1793" selection-end="1793" vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="870">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="54" selection-start="1239" selection-end="1239" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="3930">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="26" selection-start="580" selection-end="580" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="585">
@@ -712,7 +722,10 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="178" column="107" selection-start="6353" selection-end="6353" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3180">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -747,7 +760,10 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="11" selection-start="1268" selection-end="1268" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1020">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -761,13 +777,11 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="13" selection-start="3254" selection-end="3254" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="2715" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
@@ -780,13 +794,11 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="13" selection-start="3254" selection-end="3254" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="2715" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
@@ -799,13 +811,11 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="40" column="25" selection-start="1362" selection-end="1362" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="765">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="13" selection-start="3254" selection-end="3254" vertical-scroll-proportion="0.0" vertical-offset="1665" max-vertical-offset="2715" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
@@ -822,16 +832,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="149" column="22" selection-start="6094" selection-end="6094" vertical-scroll-proportion="0.0" vertical-offset="1699" max-vertical-offset="2385" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/TestConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="21" selection-start="655" selection-end="655" vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="585" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="20" selection-start="1018" selection-end="1018" vertical-scroll-proportion="0.0" vertical-offset="480" max-vertical-offset="675">
@@ -842,7 +842,10 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4" column="14" selection-start="111" selection-end="111" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="765">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -851,11 +854,6 @@
         <state line="20" column="21" selection-start="792" selection-end="792" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="435">
           <folding />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="97" selection-end="97" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="240" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
@@ -868,7 +866,10 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -885,11 +886,6 @@
     <entry file="jar://$MAVEN_REPOSITORY$/net/openhft/chronicle/2.0.2/chronicle-2.0.2.jar!/net/openhft/chronicle/IndexedChronicle.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="22" selection-start="1014" selection-end="1014" vertical-scroll-proportion="0.34210527" vertical-offset="64" max-vertical-offset="735" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/TestConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="21" selection-start="655" selection-end="655" vertical-scroll-proportion="0.5263158" vertical-offset="0" max-vertical-offset="684" />
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/net/openhft/chronicle/2.0.1/chronicle-2.0.1.jar!/net/openhft/chronicle/tools/ChronicleIndexReader.class">
@@ -927,11 +923,6 @@
         <state line="23" column="45" selection-start="753" selection-end="753" vertical-scroll-proportion="0.13056093" vertical-offset="0" max-vertical-offset="1034" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/firststeps/ChronicleTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="117" column="60" selection-start="5117" selection-end="5165" vertical-scroll-proportion="0.73457396" vertical-offset="900" max-vertical-offset="2610" />
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/net/openhft/chronicle/2.0.1/chronicle-2.0.1-sources.jar!/net/openhft/chronicle/ExcerptTailer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="23" column="17" selection-start="725" selection-end="725" vertical-scroll-proportion="0.13056093" vertical-offset="0" max-vertical-offset="1034" />
@@ -966,16 +957,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="7" selection-start="416" selection-end="416" vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="1095">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="0" selection-start="610" selection-end="2034" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="4035">
+        <state line="5" column="0" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="450">
           <folding />
         </state>
       </provider>
@@ -987,17 +971,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="450">
+        <state line="48" column="9" selection-start="1323" selection-end="1323" vertical-scroll-proportion="0.0" vertical-offset="120" max-vertical-offset="3855">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Class.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="115" column="10" selection-start="3579" selection-end="3579" vertical-scroll-proportion="0.0" vertical-offset="755" max-vertical-offset="45765">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Object.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="63" column="29" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8055">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="80" selection-start="561" selection-end="561" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1095">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="39" selection-start="4493" selection-end="4493" vertical-scroll-proportion="0.075642966" vertical-offset="1960" max-vertical-offset="3225">
-          <folding />
+        <state line="114" column="16" selection-start="3993" selection-end="3993" vertical-scroll-proportion="2.2922251" vertical-offset="0" max-vertical-offset="3570">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2412#1" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

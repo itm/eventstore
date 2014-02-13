@@ -26,6 +26,9 @@
         <module name="TestbedEventStore" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="FastEventStore" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 

@@ -20,6 +20,8 @@ public interface IEventStore<T> {
 	 */
 	public void storeEvent(@Nonnull T object) throws IOException;
 
+    public void storeEvent(@Nonnull T object, Class<T> type) throws  IOException;
+
 	/**
 	 * Getting an iterator for events between two timestamps
 	 *

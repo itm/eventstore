@@ -69,7 +69,7 @@
       <file leaf-file-name="ChronicleBasedEventStore.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="114" column="16" selection-start="3993" selection-end="3993" vertical-scroll-proportion="2.2922251" vertical-offset="0" max-vertical-offset="3570">
+            <state line="94" column="39" selection-start="3482" selection-end="3482" vertical-scroll-proportion="0.3324397" vertical-offset="1162" max-vertical-offset="3555">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2382#2412#1" expanded="true" />
@@ -117,7 +117,7 @@
       <file leaf-file-name="IEventStore.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="80" selection-start="561" selection-end="561" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1095">
+            <state line="35" column="46" selection-start="864" selection-end="864" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1095">
               <folding />
             </state>
           </provider>
@@ -994,14 +994,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="80" selection-start="561" selection-end="561" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1095">
+        <state line="35" column="46" selection-start="864" selection-end="864" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1095">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="16" selection-start="3993" selection-end="3993" vertical-scroll-proportion="2.2922251" vertical-offset="0" max-vertical-offset="3570">
+        <state line="94" column="39" selection-start="3482" selection-end="3482" vertical-scroll-proportion="0.3324397" vertical-offset="1162" max-vertical-offset="3555">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2382#2412#1" expanded="true" />

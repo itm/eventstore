@@ -18,9 +18,9 @@ public interface IEventStore<T> {
 	 * @throws java.io.IOException
 	 * 		if the stream is broken or the event couldn't be serialized
 	 */
-	public void storeEvent(@Nonnull T object) throws IOException;
+	public void storeEvent(@Nonnull final T object) throws IOException;
 
-    public void storeEvent(@Nonnull T object, Class<T> type) throws  IOException;
+    public void storeEvent(@Nonnull final T object, final Class<T> type) throws  IOException;
 
 	/**
 	 * Getting an iterator for events between two timestamps

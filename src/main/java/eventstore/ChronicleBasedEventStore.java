@@ -32,7 +32,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     private Map<Byte, Function<byte[], T>> deserializers;
 
 
-    public ChronicleBasedEventStore(@Nonnull String chronicleBasePath, Map<Class<T>, Function<T, byte[]>> serializers,
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
                                     Map<Class<T>, Function<byte[], T>> deserializers)
             throws FileNotFoundException, IllegalArgumentException {
         this.writeLock = new Object();
@@ -63,7 +63,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public void storeEvent(@Nonnull T object) throws IOException {
+    public void storeEvent(@Nonnull final T object) throws IOException {
 
         // Object is of type T, so Class is Class<T>. No need to check!
         @SuppressWarnings("unchecked") Class<T> c = (Class<T>) object.getClass();
@@ -72,7 +72,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public void storeEvent(@Nonnull T object, Class<T> type) throws IOException {
+    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException {
         synchronized (writeLock) {
 
             ExcerptAppender appender = chronicle.createAppender();

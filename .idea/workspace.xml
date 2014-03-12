@@ -19,7 +19,7 @@
   </component>
   <component name="DaemonCodeAnalyzer">
     <disable_hints>
-      <file url="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStorePerformanceTest.java" />
+      <file url="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStorePerformanceTest.java" />
     </disable_hints>
   </component>
   <component name="DebuggerManager">
@@ -70,20 +70,20 @@
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="ChronicleBasedEventStoreTest.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStoreTest.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="62" column="81" selection-start="1751" selection-end="1751" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3630">
+            <state line="62" column="81" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3630">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ChronicleBasedEventStore.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+      <file leaf-file-name="ChronicleBasedEventStore.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="99" column="25" selection-start="3498" selection-end="3498" vertical-scroll-proportion="0.46246648" vertical-offset="930" max-vertical-offset="3975">
+            <state line="99" column="25" selection-start="3480" selection-end="3480" vertical-scroll-proportion="0.0" vertical-offset="120" max-vertical-offset="3975">
               <folding>
-                <element signature="e#3252#3282#1" expanded="true" />
+                <element signature="e#3234#3264#1" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,42 +93,44 @@
         <entry file="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/org/apache/log4j/Logger.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="29" column="38" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3045">
-              <folding />
+              <folding>
+                <element signature="e#0#6769#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="21" selection-start="855" selection-end="855" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2310">
+            <state line="26" column="21" selection-start="837" selection-end="837" vertical-scroll-proportion="-0.70666665" vertical-offset="1185" max-vertical-offset="2310">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="CloseableIterator.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/CloseableIterator.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/CloseableIterator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="22" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="210">
+            <state line="5" column="22" selection-start="97" selection-end="97" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="210">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="IEventContainer.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventContainer.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventContainer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="11" selection-start="209" selection-end="209" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="255">
+            <state line="7" column="11" selection-start="191" selection-end="191" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="IEventStore.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="61" column="83" selection-start="1757" selection-end="1757" vertical-scroll-proportion="0.0" vertical-offset="915" max-vertical-offset="1035">
+            <state line="61" column="83" selection-start="1739" selection-end="1739" vertical-scroll-proportion="0.0" vertical-offset="915" max-vertical-offset="1035">
               <folding />
             </state>
           </provider>
@@ -159,9 +161,9 @@
         <option value="$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ClosableIterator.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/CloseableIterator.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStoreTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -335,13 +337,14 @@
     <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateTestDialog.RecentsKey">
-      <recent name="eventstore" />
-    </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="eventstore" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
       <recent name="de.uniluebeck.itm" />
     </key>
   </component>
@@ -350,8 +353,8 @@
       <module name="FastEventStore" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="de.uniluebeck.itm.eventstore" />
-      <option name="MAIN_CLASS_NAME" value="de.uniluebeck.itm.eventstore.ChronicleBasedEventStoreTest" />
+      <option name="PACKAGE_NAME" value="eventstore" />
+      <option name="MAIN_CLASS_NAME" value="eventstore.ChronicleBasedEventStoreTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -372,8 +375,8 @@
       <module name="FastEventStore" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="de.uniluebeck.itm.eventstore" />
-      <option name="MAIN_CLASS_NAME" value="de.uniluebeck.itm.eventstore.ChronicleBasedEventStoreTest" />
+      <option name="PACKAGE_NAME" value="eventstore" />
+      <option name="MAIN_CLASS_NAME" value="eventstore.ChronicleBasedEventStoreTest" />
       <option name="METHOD_NAME" value="testStoreEvent" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -394,8 +397,8 @@
       <module name="FastEventStore" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="de.uniluebeck.itm.eventstore" />
-      <option name="MAIN_CLASS_NAME" value="de.uniluebeck.itm.eventstore.ChronicleBasedEventStoreTest" />
+      <option name="PACKAGE_NAME" value="eventstore" />
+      <option name="MAIN_CLASS_NAME" value="eventstore.ChronicleBasedEventStoreTest" />
       <option name="METHOD_NAME" value="testInvalidStoreEvent" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -416,8 +419,8 @@
       <module name="FastEventStore" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="de.uniluebeck.itm.eventstore" />
-      <option name="MAIN_CLASS_NAME" value="de.uniluebeck.itm.eventstore.ChronicleBasedEventStoreTest" />
+      <option name="PACKAGE_NAME" value="eventstore" />
+      <option name="MAIN_CLASS_NAME" value="eventstore.ChronicleBasedEventStoreTest" />
       <option name="METHOD_NAME" value="testGetAllEvents" />
       <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -435,7 +438,7 @@
       <method />
     </configuration>
     <configuration default="false" name="ChronicleBasedEventStorePerformanceTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="de.uniluebeck.itm.eventstore.ChronicleBasedEventStorePerformanceTest" />
+      <option name="MAIN_CLASS_NAME" value="eventstore.ChronicleBasedEventStorePerformanceTest" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -629,13 +632,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957503" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32870772" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -647,8 +651,8 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32870772" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18802084" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32870772" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" x="100" y="122" width="1720" height="931" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30029732" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -659,7 +663,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957503" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296875" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957503" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992467" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -712,35 +715,35 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="17" selection-start="161" selection-end="161" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="255">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/DefaultEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="450">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="35" column="46" selection-start="864" selection-end="864" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="1125">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStorePerformanceTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStorePerformanceTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="100" column="20" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.0" vertical-offset="1500" max-vertical-offset="1905">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStoreTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="48" column="9" selection-start="1323" selection-end="1323" vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="4035">
           <folding />
@@ -761,30 +764,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="178" column="107" selection-start="6353" selection-end="6353" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3180">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/DefaultEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="25" column="0" selection-start="442" selection-end="442" vertical-scroll-proportion="0.0" vertical-offset="375" max-vertical-offset="465">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="37" selection-start="900" selection-end="900" vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="795">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStoreTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="35" column="54" selection-start="1239" selection-end="1239" vertical-scroll-proportion="0.0" vertical-offset="525" max-vertical-offset="3930">
           <folding />
@@ -798,64 +801,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="11" selection-start="1268" selection-end="1268" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="1020">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="39" selection-start="349" selection-end="349" vertical-scroll-proportion="0.0" vertical-offset="225" max-vertical-offset="600">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="0" selection-start="1067" selection-end="1067" vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="600">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1403" selection-end="1403" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="0" selection-start="1067" selection-end="1067" vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="600">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="40" column="25" selection-start="1362" selection-end="1362" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="765">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="0" selection-start="1067" selection-end="1067" vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="600">
           <folding />
@@ -869,18 +872,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="20" selection-start="1018" selection-end="1018" vertical-scroll-proportion="0.0" vertical-offset="480" max-vertical-offset="675">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4" column="14" selection-start="111" selection-end="111" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="765">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -892,18 +895,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="20" selection-start="1018" selection-end="1018" vertical-scroll-proportion="0.0" vertical-offset="480" max-vertical-offset="675">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="0" selection-start="1306" selection-end="1306" vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="765">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -980,7 +983,9 @@
     </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="29" selection-start="1510" selection-end="1510" vertical-scroll-proportion="-0.30666667" vertical-offset="945" max-vertical-offset="8055" />
+        <state line="63" column="29" selection-start="1510" selection-end="1510" vertical-scroll-proportion="-0.30666667" vertical-offset="945" max-vertical-offset="8055">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.7.0_12.jdk/Contents/Home/src.zip!/java/lang/Class.java">
@@ -988,37 +993,30 @@
         <state line="115" column="10" selection-start="3579" selection-end="3579" vertical-scroll-proportion="0.0" vertical-offset="755" max-vertical-offset="45765" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/DefaultEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/DefaultEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="110" selection-end="110" vertical-scroll-proportion="0.06666667" vertical-offset="0" max-vertical-offset="1125">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventContainer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="11" selection-start="209" selection-end="209" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="255">
+        <state line="7" column="11" selection-start="191" selection-end="191" vertical-scroll-proportion="0.0" vertical-offset="105" max-vertical-offset="255">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/CloseableIterator.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/CloseableIterator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="22" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+        <state line="5" column="22" selection-start="97" selection-end="97" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="210">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/IEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/IEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="61" column="83" selection-start="1757" selection-end="1757" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="21" selection-start="855" selection-end="855" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2310">
+        <state line="61" column="83" selection-start="1739" selection-end="1739" vertical-scroll-proportion="0.0" vertical-offset="915" max-vertical-offset="1035">
           <folding />
         </state>
       </provider>
@@ -1026,30 +1024,39 @@
     <entry file="jar://$MAVEN_REPOSITORY$/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar!/org/apache/log4j/Logger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="38" selection-start="1103" selection-end="1103" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3045">
-          <folding />
+          <folding>
+            <element signature="e#0#6769#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStorePerformanceTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStorePerformanceTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="69" column="32" selection-start="1938" selection-end="1938" vertical-scroll-proportion="0.8243968" vertical-offset="0" max-vertical-offset="1395">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStoreTest.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/eventstore/ChronicleBasedEventStoreTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="81" selection-start="1751" selection-end="1751" vertical-scroll-proportion="0.0" vertical-offset="97" max-vertical-offset="3630">
+        <state line="62" column="81" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3630">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/uniluebeck/itm/eventstore/ChronicleBasedEventStore.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/eventstore/ChronicleBasedEventStore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="99" column="25" selection-start="3498" selection-end="3498" vertical-scroll-proportion="0.46246648" vertical-offset="930" max-vertical-offset="3975">
+        <state line="99" column="25" selection-start="3480" selection-end="3480" vertical-scroll-proportion="0.0" vertical-offset="120" max-vertical-offset="3975">
           <folding>
-            <element signature="e#3252#3282#1" expanded="true" />
+            <element signature="e#3234#3264#1" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="21" selection-start="837" selection-end="837" vertical-scroll-proportion="-0.70666665" vertical-offset="1185" max-vertical-offset="2310">
+          <folding />
         </state>
       </provider>
     </entry>

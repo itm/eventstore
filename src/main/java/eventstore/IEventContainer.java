@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.eventstore;
+package eventstore;
 
 /**
  * The Event Container is returned by the iterator of an IEventStore. It contains the event itself and a timestamp

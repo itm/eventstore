@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.eventstore;
+package eventstore;
 
 public class DefaultEventContainer<T> implements IEventContainer<T> {
 

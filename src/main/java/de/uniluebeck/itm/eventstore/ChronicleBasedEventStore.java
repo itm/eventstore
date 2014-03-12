@@ -6,6 +6,7 @@ import com.google.common.collect.HashBiMap;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.IndexedChronicle;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.FileNotFoundException;
@@ -17,6 +18,9 @@ import java.util.NoSuchElementException;
 
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
+
+    private static Logger log = Logger.
+            getLogger(ChronicleBasedEventStore.class);
 
     private IndexedChronicle chronicle;
 
@@ -30,11 +34,25 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     private Map<Byte, Function<byte[], T>> deserializers;
 
+    private final Object closeControlLock = new Object();
+    private final boolean readOnly;
+    private int openCount = 0;
 
     public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
                                     Map<Class<T>, Function<byte[], T>> deserializers)
             throws FileNotFoundException, IllegalArgumentException {
+        this(chronicleBasePath, serializers, deserializers, false);
+
+    }
+
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
+                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly)
+            throws FileNotFoundException, IllegalArgumentException {
         this.writeLock = new Object();
+        this.readOnly = readOnly;
+        if (!readOnly) {
+            incrementOpenCount();
+        }
         chronicle = new IndexedChronicle(chronicleBasePath);
         if (deserializers.size() != serializers.size() || serializers.size() > 256) {
             throw new IllegalArgumentException(
@@ -45,6 +63,13 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         buildMaps(serializers, deserializers);
 
 
+    }
+
+
+    private void incrementOpenCount() {
+        synchronized (closeControlLock) {
+            openCount++;
+        }
     }
 
     private void buildMaps(Map<Class<T>, Function<T, byte[]>> serializers,
@@ -72,6 +97,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     @Override
     public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException {
+        assert !readOnly;
         synchronized (writeLock) {
 
             ExcerptAppender appender = chronicle.createAppender();
@@ -105,13 +131,24 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public void close() throws IOException{
-        try {
-            chronicle.close();
-            chronicle = null;
-        } catch (IOException e) {
-            // Closing fails. Nothing to do.
+    public void close() throws IOException {
+        synchronized (closeControlLock) {
+            openCount--;
+
+            if (openCount == 0) {
+                chronicle.close();
+                chronicle = null;
+            }
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (chronicle != null) {
+            chronicle.close();
+            log.error("ChronicleBasedEventStore.finalize(): EventStore was still open. Have you forgotten closing it?");
+        }
+        super.finalize();
     }
 
     private abstract class AbstractEventIterator implements CloseableIterator<IEventContainer<T>> {
@@ -121,6 +158,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         protected IEventContainer<T> next;
 
         public AbstractEventIterator(long fromTime) throws IOException {
+            incrementOpenCount();
             reader = chronicle.createTailer();
             if (fromTime > 0) {
                 windToTimestamp(fromTime);
@@ -131,7 +169,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
         @Override
         public void close() throws IOException {
-            // TODO close chronicle
+            ChronicleBasedEventStore.this.close();
         }
 
         private boolean windToTimestamp(long timestamp) {

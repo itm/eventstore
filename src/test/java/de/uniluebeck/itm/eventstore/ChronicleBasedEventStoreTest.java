@@ -1,4 +1,4 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import junit.framework.TestCase;
@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -64,8 +65,11 @@ public class ChronicleBasedEventStoreTest extends TestCase {
 
 	@After
 	public void cleanUp() {
-		store.close();
-	}
+        try {
+            store.close();
+        } catch (IOException e) {
+        }
+    }
 
 	@Test(expected = NotSerializableException.class)
 	public void testInvalidStoreEvent() throws Exception {

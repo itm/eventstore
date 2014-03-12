@@ -1,4 +1,4 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -91,22 +90,22 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public Iterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
+    public CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
         return new LimitedEventIterator(fromTime, toTime);
     }
 
     @Override
-    public Iterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException {
+    public CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException {
         return new InfiniteEventIterator(fromTime);
     }
 
     @Override
-    public Iterator<IEventContainer<T>> getAllEvents() throws IOException {
+    public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException {
         return new InfiniteEventIterator(0);
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException{
         try {
             chronicle.close();
             chronicle = null;
@@ -115,7 +114,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
     }
 
-    private abstract class AbstractEventIterator implements java.util.Iterator<IEventContainer<T>> {
+    private abstract class AbstractEventIterator implements CloseableIterator<IEventContainer<T>> {
 
         protected ExcerptTailer reader;
 
@@ -128,6 +127,11 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             } else {
                 next = readNextEvent();
             }
+        }
+
+        @Override
+        public void close() throws IOException {
+            // TODO close chronicle
         }
 
         private boolean windToTimestamp(long timestamp) {

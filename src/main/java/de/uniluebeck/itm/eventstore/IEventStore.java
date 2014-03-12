@@ -1,13 +1,13 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import javax.annotation.Nonnull;
+import java.io.Closeable;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * This interface contains all methods needed for using the event store
  */
-public interface IEventStore<T> {
+public interface IEventStore<T> extends Closeable {
 
 	/**
 	 * Method for storing an object
@@ -35,7 +35,7 @@ public interface IEventStore<T> {
 	 * @throws java.io.IOException
 	 * 		if the underlying stream is broken
 	 */
-	public Iterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
+	public CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
 
 	/**
 	 * Getting an iterator for events from a given timestamp until the last event in the storage
@@ -48,7 +48,7 @@ public interface IEventStore<T> {
 	 * @throws java.io.IOException
 	 * 		if the underlying stream is broken
 	 */
-	public Iterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
+	public CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
 
 
 	/**
@@ -59,12 +59,6 @@ public interface IEventStore<T> {
 	 * @throws IOException
 	 * 		if the underlying stream is broken
 	 */
-	public Iterator<IEventContainer<T>> getAllEvents() throws IOException;
-
-
-	/**
-	 * Closes the event store. Later write or read operations will fail.
-	 */
-	public void close();
+	public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException;
 
 }

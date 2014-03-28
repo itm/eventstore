@@ -154,17 +154,14 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     private abstract class AbstractEventIterator implements CloseableIterator<IEventContainer<T>> {
 
         protected ExcerptTailer reader;
+        protected long fromTime;
 
         protected IEventContainer<T> next;
 
         public AbstractEventIterator(long fromTime) throws IOException {
+            this.fromTime = fromTime;
             incrementOpenCount();
             reader = chronicle.createTailer();
-            if (fromTime > 0) {
-                windToTimestamp(fromTime);
-            } else {
-                next = readNextEvent();
-            }
         }
 
         @Override
@@ -191,6 +188,14 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
 
         protected abstract IEventContainer<T> readNextEvent();
+
+        protected void finishSetup() {
+            if (fromTime > 0) {
+                windToTimestamp(fromTime);
+            } else {
+                next = readNextEvent();
+            }
+        }
 
 
         @Override
@@ -223,6 +228,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
         public InfiniteEventIterator(long fromTime) throws IOException {
             super(fromTime);
+            finishSetup();
         }
 
         @Override
@@ -250,6 +256,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         public LimitedEventIterator(long fromTime, long toTime) throws IOException {
             super(fromTime);
             this.toTime = toTime;
+            finishSetup();
         }
 
         @Override

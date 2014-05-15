@@ -1,4 +1,4 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import junit.framework.TestCase;

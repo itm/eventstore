@@ -1,4 +1,4 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import java.io.Closeable;
 import java.util.Iterator;

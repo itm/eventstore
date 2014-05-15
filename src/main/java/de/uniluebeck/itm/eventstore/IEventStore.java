@@ -1,4 +1,4 @@
-package eventstore;
+package de.uniluebeck.itm.eventstore;
 
 import javax.annotation.Nonnull;
 import java.io.Closeable;

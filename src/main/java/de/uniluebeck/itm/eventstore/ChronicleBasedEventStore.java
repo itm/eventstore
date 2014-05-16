@@ -6,7 +6,8 @@ import com.google.common.collect.HashBiMap;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.IndexedChronicle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.FileNotFoundException;
@@ -19,7 +20,7 @@ import java.util.NoSuchElementException;
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
-    private static Logger log = Logger.
+    private static Logger log = LoggerFactory.
             getLogger(ChronicleBasedEventStore.class);
 
     private IndexedChronicle chronicle;

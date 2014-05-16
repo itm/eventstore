@@ -2,6 +2,7 @@ package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import junit.framework.TestCase;
+import net.openhft.chronicle.tools.ChronicleTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

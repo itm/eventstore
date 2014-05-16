@@ -118,8 +118,10 @@ public class ChronicleBasedEventStorePerformanceTest {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			System.err.println("Can't create chronicle");
-		}
+			log.error("Can't create chronicle", e);
+		} catch (ClassNotFoundException e) {
+            log.error("Can't create chronicle. Serializer Problem!", e);
+        }
 	}
 
 }

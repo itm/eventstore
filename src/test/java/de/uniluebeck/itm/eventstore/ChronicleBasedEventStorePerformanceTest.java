@@ -2,6 +2,8 @@ package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import net.openhft.chronicle.tools.ChronicleTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class ChronicleBasedEventStorePerformanceTest {
+    private static Logger log = LoggerFactory.
+            getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
 	private static ChronicleBasedEventStore<String> store;
 
@@ -73,13 +77,13 @@ public class ChronicleBasedEventStorePerformanceTest {
 				public void run() {
 					try {
 						for (int i = 0; i < WRITE_ITERATIONS; i++) {
-							System.out.println("\twrite iteration = " + i);
+							log.trace("\twrite iteration = " + i);
 							store.storeEvent("Test" + i);
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					System.out.println("Writing finished!");
+					log.info("Writing finished!");
 				}
 			}, "Writer"
 			).start();
@@ -88,7 +92,7 @@ public class ChronicleBasedEventStorePerformanceTest {
 				@Override
 				public void run() {
 					for (int i = 0; i < READ_ITERATIONS; i++) {
-						System.out.println("\tread iteration = " + i);
+						log.trace("\tread iteration = " + i);
 						int offset = random.nextInt((int) (System.currentTimeMillis() - start));
 
 						Iterator<IEventContainer<String>> iterator = null;
@@ -101,7 +105,7 @@ public class ChronicleBasedEventStorePerformanceTest {
 							e.printStackTrace();
 						}
 					}
-					System.out.println("Reading finished");
+					log.info("Reading finished");
 				}
 			}, "Reader1"
 			).start();

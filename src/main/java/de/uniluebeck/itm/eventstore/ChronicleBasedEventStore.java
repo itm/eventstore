@@ -10,51 +10,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.NotSerializableException;
+import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
-
     private static Logger log = LoggerFactory.
             getLogger(ChronicleBasedEventStore.class);
 
-    private IndexedChronicle chronicle;
-
+    public static final String SERIALIZER_MAP_FILE_EXTENSION = ".mapping";
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
-
+    private final String chronicleBasePath;
     private final Object writeLock;
-
-    private BiMap<Class<T>, Byte> mapping;
-
-    private Map<Class<T>, Function<T, byte[]>> serializers;
-
-    private Map<Byte, Function<byte[], T>> deserializers;
-
     private final Object closeControlLock = new Object();
     private final boolean readOnly;
+    private IndexedChronicle chronicle;
+    private BiMap<Class<T>, Byte> mapping;
+    private Map<Class<T>, Function<T, byte[]>> serializers;
+    private Map<Byte, Function<byte[], T>> deserializers;
     private int openCount = 0;
 
     public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
                                     Map<Class<T>, Function<byte[], T>> deserializers)
-            throws FileNotFoundException, IllegalArgumentException {
+            throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
         this(chronicleBasePath, serializers, deserializers, false);
 
     }
 
     public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
                                     Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly)
-            throws FileNotFoundException, IllegalArgumentException {
+            throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
         this.writeLock = new Object();
         this.readOnly = readOnly;
+        this.chronicleBasePath = chronicleBasePath;
         if (!readOnly) {
             incrementOpenCount();
         }
         chronicle = new IndexedChronicle(chronicleBasePath);
+
         if (deserializers.size() != serializers.size() || serializers.size() > 256) {
             throw new IllegalArgumentException(
                     "There must be the same amount of serializers and deserializers. Furthermore only up to 256 serializers and deserializers are supported"
@@ -74,17 +70,107 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     private void buildMaps(Map<Class<T>, Function<T, byte[]>> serializers,
-                           Map<Class<T>, Function<byte[], T>> deserializers) {
+                           Map<Class<T>, Function<byte[], T>> externalDeserializers) throws ClassNotFoundException, IllegalArgumentException {
+
+
+        HashMap<String, Byte> serializerMapping = loadPersistedSerializerMapping();
         mapping = HashBiMap.create();
+        Byte maxByte = Byte.MIN_VALUE;
         this.serializers = serializers;
         this.deserializers = new HashMap<Byte, Function<byte[], T>>();
 
-        byte b = 0;
-        for (Map.Entry<Class<T>, Function<byte[], T>> entry : deserializers.entrySet()) {
-            mapping.put(entry.getKey(), b);
-            this.deserializers.put(b, entry.getValue());
-            b++;
+        // Build mapping for existing types
+        for (Map.Entry<String, Byte> entry : serializerMapping.entrySet()) {
+            Byte id = entry.getValue();
+            String className = entry.getKey();
+            Class clazz = Class.forName(className);
+            mapping.put(clazz, id);
+            if (id > maxByte) {
+                maxByte = id;
+            }
         }
+
+
+        byte b = maxByte;
+        if (serializers.size() > 0) {
+            if (b < Byte.MAX_VALUE - serializers.size()) {
+                b = (byte) (b + 1);
+                for (Map.Entry<Class<T>, Function<byte[], T>> entry : externalDeserializers.entrySet()) {
+                    String className = entry.getKey().getName();
+                    if (!serializerMapping.containsKey(className)) {
+                        serializerMapping.put(className, b);
+                        mapping.put(entry.getKey(), b);
+                        this.deserializers.put(b, entry.getValue());
+                        b++;
+                    } else {
+                        this.deserializers.put(serializerMapping.get(className), entry.getValue());
+                    }
+                }
+
+
+            } else {
+                throw new IllegalArgumentException("Can't add that many serializers and deserializers!");
+            }
+        }
+
+        storeSerializerMapping(serializerMapping);
+    }
+
+    private HashMap<String, Byte> loadPersistedSerializerMapping() {
+        File serializerMappingFile = new File(chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION);
+        HashMap<String, Byte> serializerMapping = new HashMap<String, Byte>();
+        if (serializerMappingFile.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(serializerMappingFile));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] components = line.split(",");
+                    if (components.length != 2) {
+                        log.warn("Invalid line in mapping file: {}", line);
+                        continue;
+                    }
+                    serializerMapping.put(components[0], Byte.parseByte(components[1]));
+                }
+                br.close();
+            } catch (FileNotFoundException e) {
+                log.error("Can't find mapping file {}.", serializerMappingFile.getAbsolutePath());
+            } catch (IOException e) {
+                log.error("Failed to read line from CSV.", e);
+            }
+
+        }
+
+        return serializerMapping;
+    }
+
+    private boolean storeSerializerMapping(HashMap<String, Byte> serializerMapping) {
+        File serializerMappingFile = new File(chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION);
+        if (!serializerMappingFile.exists()) {
+            try {
+                serializerMappingFile.createNewFile();
+            } catch (IOException e) {
+                log.error("Can't create serializer mapping file.", e);
+                return false;
+            }
+        }
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(serializerMappingFile));
+            Iterator<Map.Entry<String, Byte>> it = serializerMapping.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Byte> entry = it.next();
+                bw.write(entry.getKey() + "," + entry.getValue());
+                if (it.hasNext()) {
+                    bw.write("\n");
+                }
+            }
+            bw.close();
+
+        } catch (IOException e) {
+            log.error("Can't create file writer for mapping file.", e);
+            return false;
+        }
+
+        return true;
     }
 
     @Override

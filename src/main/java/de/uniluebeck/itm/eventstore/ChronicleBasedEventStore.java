@@ -15,11 +15,10 @@ import java.util.*;
 
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
-    private static Logger log = LoggerFactory.
-            getLogger(ChronicleBasedEventStore.class);
-
     public static final String SERIALIZER_MAP_FILE_EXTENSION = ".mapping";
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
+    private static Logger log = LoggerFactory.
+            getLogger(ChronicleBasedEventStore.class);
     private final String chronicleBasePath;
     private final Object writeLock;
     private final Object closeControlLock = new Object();
@@ -49,7 +48,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         try {
             chronicle = new IndexedChronicle(chronicleBasePath);
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Can't create event store with base path "+ chronicleBasePath);
+            throw new FileNotFoundException("Can't create event store with base path " + chronicleBasePath);
         }
 
         if (deserializers.size() != serializers.size() || serializers.size() > 256) {
@@ -85,20 +84,19 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         for (Map.Entry<String, Byte> entry : serializerMapping.entrySet()) {
             Byte id = entry.getValue();
             String className = entry.getKey();
-            Class clazz = null;
             try {
-                clazz = Class.forName(className);
+                Class clazz = Class.forName(className);
+                mapping.put(clazz, id);
+                if (id > maxByte) {
+                    maxByte = id;
+                }
             } catch (ClassNotFoundException e) {
-               notFoundClasses.add(className);
-            }
-            mapping.put(clazz, id);
-            if (id > maxByte) {
-                maxByte = id;
+                notFoundClasses.add(className);
             }
         }
 
         if (notFoundClasses.size() > 0) {
-            throw new ClassNotFoundException("Unknown classes in event store mapping file. Check the mapping file and fix the class names if appropriate.\nUnknown Classes: "+ notFoundClasses);
+            throw new ClassNotFoundException("Unknown classes in event store mapping file. Check the mapping file and fix the class names if appropriate.\nUnknown Classes: " + notFoundClasses);
         }
 
 
@@ -145,7 +143,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                 br.close();
             } catch (FileNotFoundException e) {
                 log.error("Can't find mapping file {}.", serializerMappingFile.getAbsolutePath());
-                throw new FileNotFoundException("Event Store can't find mapping file "+ serializerMappingFile.getAbsolutePath());
+                throw new FileNotFoundException("Event Store can't find mapping file " + serializerMappingFile.getAbsolutePath());
             } catch (IOException e) {
                 log.error("Failed to read line from CSV mapping file.", e);
             }

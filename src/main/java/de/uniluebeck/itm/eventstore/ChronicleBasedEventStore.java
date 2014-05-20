@@ -122,7 +122,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             }
         }
 
-        storeSerializerMapping(serializerMapping);
+        if(!storeSerializerMapping(serializerMapping)) {
+            throw new FileNotFoundException("Event Store can't create mapping file or file is not writable!: "+ (chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION));
+        }
     }
 
     private HashMap<String, Byte> loadPersistedSerializerMapping() throws FileNotFoundException {

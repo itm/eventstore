@@ -3,6 +3,7 @@ package de.uniluebeck.itm.eventstore;
 import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.IndexedChronicle;
@@ -37,7 +38,12 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
-                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly)
+                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly) throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
+        this(chronicleBasePath, serializers, deserializers, readOnly, ChronicleConfig.SMALL.dataBlockSize());
+    }
+
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
+                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly, int dataBlockSize)
             throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
         this.writeLock = new Object();
         this.readOnly = readOnly;
@@ -46,7 +52,8 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             incrementOpenCount();
         }
         try {
-            chronicle = new IndexedChronicle(chronicleBasePath);
+            ChronicleConfig config = ChronicleConfig.SMALL.clone().dataBlockSize(dataBlockSize);
+            chronicle = new IndexedChronicle(chronicleBasePath, config);
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("Can't create event store with base path " + chronicleBasePath);
         }
@@ -62,6 +69,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     }
 
+    private static int entryOverhead() {
+        return TIMESTAMP_SIZE + Byte.SIZE + Integer.SIZE;
+    }
 
     private void incrementOpenCount() {
         synchronized (closeControlLock) {
@@ -199,25 +209,30 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException {
-         // Object is of type T, so Class is Class<T>. No need to check!
+    public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException, IllegalArgumentException {
+        // Object is of type T, so Class is Class<T>. No need to check!
         @SuppressWarnings("unchecked") Class<T> c = (Class<T>) object.getClass();
         storeEvent(object, c);
 
     }
 
     @Override
-    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException {
+    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException, IllegalArgumentException {
         if (readOnly) {
             throw new UnsupportedOperationException("Storing events is not allowed in read only mode");
         }
         synchronized (writeLock) {
 
-            ExcerptAppender appender = chronicle.createAppender();
-            Function<T, byte[]> serializer = serializers.get(type);
             try {
+                Function<T, byte[]> serializer = serializers.get(type);
                 byte[] serialized = serializer.apply(object);
-                appender.startExcerpt(serialized.length + TIMESTAMP_SIZE + Byte.SIZE + Integer.SIZE);
+                int entrySize = entryOverhead() + serialized.length;
+                if (entrySize > chronicle.config().dataBlockSize()) {
+                    throw new IllegalArgumentException("Object too big to be stored in event store. Actual size: "
+                            + serialized.length + ", allowed size: " + (chronicle.config().dataBlockSize() - entryOverhead()));
+                }
+                ExcerptAppender appender = chronicle.createAppender();
+                appender.startExcerpt(entrySize);
                 appender.writeLong(System.currentTimeMillis());
                 appender.writeByte(mapping.get(type));
                 appender.write(serialized);

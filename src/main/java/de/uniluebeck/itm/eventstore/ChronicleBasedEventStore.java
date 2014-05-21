@@ -122,8 +122,8 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             }
         }
 
-        if(!storeSerializerMapping(serializerMapping)) {
-            throw new FileNotFoundException("Event Store can't create mapping file or file is not writable!: "+ (chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION));
+        if (!storeSerializerMapping(serializerMapping)) {
+            throw new FileNotFoundException("Event Store can't create mapping file or file is not writable!: " + (chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION));
         }
     }
 
@@ -131,8 +131,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         File serializerMappingFile = new File(chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION);
         HashMap<String, Byte> serializerMapping = new HashMap<String, Byte>();
         if (serializerMappingFile.exists()) {
+            BufferedReader br = null;
             try {
-                BufferedReader br = new BufferedReader(new FileReader(serializerMappingFile));
+                br = new BufferedReader(new FileReader(serializerMappingFile));
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] components = line.split(",");
@@ -142,12 +143,18 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                     }
                     serializerMapping.put(components[0], Byte.parseByte(components[1]));
                 }
-                br.close();
             } catch (FileNotFoundException e) {
                 log.error("Can't find mapping file {}.", serializerMappingFile.getAbsolutePath());
                 throw new FileNotFoundException("Event Store can't find mapping file " + serializerMappingFile.getAbsolutePath());
             } catch (IOException e) {
                 log.error("Failed to read line from CSV mapping file.", e);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                    }
+                }
             }
 
         }
@@ -165,8 +172,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                 return false;
             }
         }
+        BufferedWriter bw = null;
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(serializerMappingFile));
+            bw = new BufferedWriter(new FileWriter(serializerMappingFile));
             Iterator<Map.Entry<String, Byte>> it = serializerMapping.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Byte> entry = it.next();
@@ -175,28 +183,34 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                     bw.write("\n");
                 }
             }
-            bw.close();
-
         } catch (IOException e) {
             log.error("Can't create file writer for mapping file.", e);
             return false;
+        } finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                }
+            }
         }
 
         return true;
     }
 
     @Override
-    public void storeEvent(@Nonnull final T object) throws IOException {
-
-        // Object is of type T, so Class is Class<T>. No need to check!
+    public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException {
+         // Object is of type T, so Class is Class<T>. No need to check!
         @SuppressWarnings("unchecked") Class<T> c = (Class<T>) object.getClass();
         storeEvent(object, c);
 
     }
 
     @Override
-    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException {
-        assert !readOnly;
+    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException {
+        if (readOnly) {
+            throw new UnsupportedOperationException("Storing events is not allowed in read only mode");
+        }
         synchronized (writeLock) {
 
             ExcerptAppender appender = chronicle.createAppender();
@@ -209,7 +223,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                 appender.write(serialized);
                 appender.finish();
             } catch (NullPointerException e) {
-                throw new NotSerializableException("Can't find a serializer for this type");
+                throw new NotSerializableException("Can't find a serializer for type " + type.getName());
             }
         }
     }

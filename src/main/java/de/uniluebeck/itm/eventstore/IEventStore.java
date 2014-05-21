@@ -17,10 +17,12 @@ public interface IEventStore<T> extends Closeable {
 	 *
 	 * @throws java.io.IOException
 	 * 		if the stream is broken or the event couldn't be serialized
+     * @throws java.lang.UnsupportedOperationException
+     *      if the event store is in read only mode
 	 */
-	public void storeEvent(@Nonnull final T object) throws IOException;
+	public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException;
 
-    public void storeEvent(@Nonnull final T object, final Class<T> type) throws  IOException;
+    public void storeEvent(@Nonnull final T object, final Class<T> type) throws  IOException, UnsupportedOperationException;
 
 	/**
 	 * Getting an iterator for events between two timestamps

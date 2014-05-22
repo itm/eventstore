@@ -71,4 +71,10 @@ public interface IEventStore<T> extends Closeable {
      */
     public long size();
 
+    /**
+     * Checks if this store contains any events
+     * @return true if the event store is empty (size == 0), false otherwise
+     */
+    public boolean isEmpty();
+
 }

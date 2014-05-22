@@ -271,6 +271,11 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    @Override
     public void close() throws IOException {
         synchronized (closeControlLock) {
             openCount--;

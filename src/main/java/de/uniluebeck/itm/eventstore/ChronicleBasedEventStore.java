@@ -3,6 +3,7 @@ package de.uniluebeck.itm.eventstore;
 import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer;
 import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
@@ -137,6 +138,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
     }
 
+
     private HashMap<String, Byte> loadPersistedSerializerMapping() throws FileNotFoundException {
         File serializerMappingFile = new File(chronicleBasePath + SERIALIZER_MAP_FILE_EXTENSION);
         HashMap<String, Byte> serializerMapping = new HashMap<String, Byte>();
@@ -256,6 +258,16 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     @Override
     public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException {
         return new InfiniteEventIterator(0);
+    }
+
+    @Override
+    public long actualPayloadByteSize() throws IOException {
+        return new IndexedChronicleAnalyzer(this.chronicle).actualPayloadByteSize();
+    }
+
+    @Override
+    public long size() {
+        return chronicle.size();
     }
 
     @Override

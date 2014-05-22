@@ -59,4 +59,16 @@ public interface IEventStore<T> extends Closeable {
      */
     public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException;
 
+
+    /**
+     * @see de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer#actualPayloadByteSize() for a description
+     */
+    public long actualPayloadByteSize() throws IOException;
+
+    /**
+     * Getter for the number of entries in this store
+     * @return the number of events in this store
+     */
+    public long size();
+
 }

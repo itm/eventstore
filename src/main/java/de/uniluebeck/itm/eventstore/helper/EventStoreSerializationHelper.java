@@ -45,13 +45,20 @@ public class EventStoreSerializationHelper<T> {
         }
     }
 
-    public T deserialize(byte[] serialization) {
+    public T deserialize(byte[] serialization) throws IllegalArgumentException {
         if (serialization == null || serialization.length == 0) {
-            throw new UnsupportedOperationException("Can't deserialize empty byte array");
+            throw new IllegalArgumentException("Can't deserialize empty byte array");
+        }
+
+        Function<byte[], T> deserializer = deserializers.get(serialization[0]);
+        if (deserializer == null) {
+            throw new IllegalArgumentException("The provided byte array is invalid. No matching serializer found!");
         }
         byte[] event = new byte[serialization.length-1];
         System.arraycopy(serialization,1,event,0,serialization.length-1);
-        return deserializers.get(serialization[0]).apply(event);
+
+
+        return deserializer.apply(event);
     }
 
     private void buildMaps(Map<Class<T>, Function<T, byte[]>> serializers,

@@ -2,9 +2,8 @@ package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer;
-import de.uniluebeck.itm.eventstore.helper.EventStoreSerializationHelper;
+import de.uniluebeck.itm.util.serialization.MultiClassSerializationHelper;
 import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
@@ -13,8 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 
 public class ChronicleBasedEventStore<T> implements IEventStore<T> {
@@ -29,23 +32,23 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
     private IndexedChronicle chronicle;
     private int openCount = 0;
 
-    private EventStoreSerializationHelper<T> serializationHelper;
+    private MultiClassSerializationHelper<T> serializationHelper;
 
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
-                                    Map<Class<T>, Function<byte[], T>> deserializers)
-            throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
+                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers)
+            throws IOException, IllegalArgumentException, ClassNotFoundException {
         this(chronicleBasePath, serializers, deserializers, false);
 
     }
 
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
-                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly) throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
+                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers, boolean readOnly) throws IOException, IllegalArgumentException, ClassNotFoundException {
         this(chronicleBasePath, serializers, deserializers, readOnly, ChronicleConfig.SMALL.dataBlockSize());
     }
 
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<T>, Function<T, byte[]>> serializers,
-                                    Map<Class<T>, Function<byte[], T>> deserializers, boolean readOnly, int dataBlockSize)
-            throws FileNotFoundException, IllegalArgumentException, ClassNotFoundException {
+    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
+                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers, boolean readOnly, int dataBlockSize)
+            throws IOException, IllegalArgumentException, ClassNotFoundException {
         this.writeLock = new Object();
         this.readOnly = readOnly;
         this.chronicleBasePath = chronicleBasePath;
@@ -65,7 +68,9 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             );
         }
 
-        serializationHelper = new EventStoreSerializationHelper<T>(chronicleBasePath, serializers, deserializers);
+        File mappingFile = new File(chronicleBasePath+".mapping");
+        BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.<T>loadOrCreateClassByteMap(serializers, deserializers, mappingFile);
+        serializationHelper = new MultiClassSerializationHelper<T>(serializers, deserializers, mapping);
 
 
     }

@@ -80,7 +80,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
 
         String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
         ChronicleTools.deleteOnExit(basePath);
-        store = EventStoreFactory.create().chronicleBasePath(basePath).serializers(serializers).deserializers(deserializers).build();
+        store = EventStoreFactory.create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
     }
 
     @After

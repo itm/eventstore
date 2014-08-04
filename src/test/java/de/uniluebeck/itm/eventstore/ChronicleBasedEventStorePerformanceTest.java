@@ -70,7 +70,7 @@ public class ChronicleBasedEventStorePerformanceTest {
         final long start = System.currentTimeMillis();
         final Random random = new Random(start);
         try {
-            store = EventStoreFactory.<String>create().chronicleBasePath(basePath).serializers(serializers).deserializers(deserializers).build();
+            store = EventStoreFactory.<String>create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
             new Thread(new Runnable() {
                 @Override
                 public void run() {

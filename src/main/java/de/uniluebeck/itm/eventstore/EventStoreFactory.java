@@ -24,32 +24,32 @@ public class EventStoreFactory<T> {
     }
 
 
-    public EventStoreFactory<T> chronicleBasePath(String chronicleBasePath) {
+    public EventStoreFactory<T> eventStoreWithBasePath(String chronicleBasePath) {
         config.setChronicleBasePath(chronicleBasePath);
         return this;
     }
 
-    public EventStoreFactory<T> readOnly(boolean readOnly) {
+    public EventStoreFactory<T> inReadOnlyMode(boolean readOnly) {
         config.setReadOnly(readOnly);
         return this;
     }
 
-    public EventStoreFactory<T> serializers(Map<Class<? extends T>, Function<? extends T, byte[]>> serializers) {
+    public EventStoreFactory<T> withSerializers(Map<Class<? extends T>, Function<? extends T, byte[]>> serializers) {
         config.setSerializers(serializers);
         return this;
     }
 
-    public EventStoreFactory<T> deserializers(Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers) {
+    public EventStoreFactory<T> andDeserializers(Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers) {
         config.setDeserializers(deserializers);
         return this;
     }
 
-    public EventStoreFactory<T> dataBlockSize(int dataBlockSize) {
+    public EventStoreFactory<T> setDataBlockSize(int dataBlockSize) {
         config.setDataBlockSize(dataBlockSize);
         return this;
     }
 
-    public EventStoreFactory<T> monotonic(boolean monotonic) {
+    public EventStoreFactory<T> havingMonotonicEventOrder(boolean monotonic) {
         config.setMonotonic(monotonic);
         return this;
     }

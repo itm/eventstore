@@ -1,11 +1,12 @@
 package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
-import junit.framework.TestCase;
 import net.openhft.chronicle.tools.ChronicleTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -15,7 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class ChronicleBasedEventStoreTest extends TestCase {
+import static org.junit.Assert.*;
+
+@RunWith(JUnit4.class)
+public class MonotonicChronicleBasedEventStoreTest {
 
     private IEventStore store;
 
@@ -80,6 +84,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
 
         String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
         ChronicleTools.deleteOnExit(basePath);
+        //noinspection unchecked
         store = EventStoreFactory.create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
     }
 
@@ -88,25 +93,25 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         try {
             store.close();
         } catch (IOException e) {
+            //
         }
     }
 
     @Test(expected = NotSerializableException.class)
     public void testInvalidStoreEvent() throws Exception {
         Object invalid = new Object();
-        try {
-            store.storeEvent(invalid);
-            fail("Expected Exception");
-        } catch (NotSerializableException e) {
-        }
+        //noinspection unchecked
+        store.storeEvent(invalid);
     }
 
     @Test
     public void testSingleEventReadFromTimestamp() throws Exception {
         String test = "Test";
         long start = System.currentTimeMillis();
+        //noinspection unchecked
         store.storeEvent("Test");
-        Iterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(start);
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(start);
         assertNotNull(iterator);
 
         assertTrue(iterator.hasNext());
@@ -118,6 +123,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         assertTrue(event.getTimestamp() >= start);
 
         assertFalse(iterator.hasNext());
+        iterator.close();
 
     }
 
@@ -126,15 +132,18 @@ public class ChronicleBasedEventStoreTest extends TestCase {
     public void testGetEventsFromTimestamp() throws Exception {
         int iteration = 10000;
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent(BigInteger.valueOf(i));
         }
         Thread.sleep(1);
         long timestamp = System.currentTimeMillis();
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent("Test" + i);
         }
 
-        Iterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(timestamp);
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(timestamp);
 
         int index = 0;
         while (iterator.hasNext()) {
@@ -146,33 +155,38 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         }
         index--;
         assertEquals(iteration, index);
-
+        iterator.close();
         // Test for reading at end
         Thread.sleep(1);
+        //noinspection unchecked
         iterator = store.getEventsFromTimestamp(System.currentTimeMillis());
 
         assertFalse(iterator.hasNext());
 
+        iterator.close();
     }
 
     @Test
     public void testGetEventsBetweenTimestamps() throws Exception {
         int iteration = 10000;
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent(BigInteger.valueOf(i));
         }
         Thread.sleep(1);
         long from = System.currentTimeMillis();
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent("Between" + i);
         }
         long to = System.currentTimeMillis();
         Thread.sleep(1);
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent("After" + i);
         }
-
-        Iterator<IEventContainer<?>> iterator = store.getEventsBetweenTimestamps(from, to);
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getEventsBetweenTimestamps(from, to);
         assertTrue(iterator.hasNext());
         int index = 0;
         while (iterator.hasNext()) {
@@ -185,23 +199,27 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         }
         index--;
         assertEquals(iteration, index);
+        iterator.close();
 
     }
 
     @Test
     public void testReadEmptyStore() throws Exception {
-        Iterator<IEventContainer<?>> iterator = store.getAllEvents();
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
         assertFalse(iterator.hasNext());
+        iterator.close();
     }
 
     @Test
     public void testGetAllEvents() throws Exception {
         int iteration = 10000;
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent(BigInteger.valueOf(i));
         }
-
-        Iterator<IEventContainer<?>> iterator = store.getAllEvents();
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
 
         int index = 0;
         while (iterator.hasNext()) {
@@ -213,6 +231,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         }
         index--;
         assertEquals(iteration, index);
+        iterator.close();
     }
 
     @Test
@@ -221,11 +240,15 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         String b = "TestB";
         String c = "TestC";
 
+        //noinspection unchecked
         store.storeEvent(a);
+        //noinspection unchecked
         store.storeEvent(b);
+        //noinspection unchecked
         store.storeEvent(c);
 
-        Iterator<IEventContainer<?>> iterator = store.getAllEvents();
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
         assertNotNull(iterator);
         assertTrue(iterator.hasNext());
         IEventContainer<?> event = iterator.next();
@@ -241,19 +264,23 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         event = iterator.next();
         assertNotNull(event);
         assertEquals(c, event.getEvent());
+        iterator.close();
     }
 
     @Test
     public void testGetAllDifferentType() throws Exception {
         int iteration = 10000;
         for (int i = 0; i <= iteration; i++) {
+            //noinspection unchecked
             store.storeEvent(BigInteger.valueOf(i));
+            //noinspection unchecked
             store.storeEvent("Test" + i);
         }
         testMultipleReaders(iteration);
         testMultipleReaders(iteration);
 
     }
+
 
     /**
      * Helper method for testGetAllDifferentType.
@@ -263,7 +290,8 @@ public class ChronicleBasedEventStoreTest extends TestCase {
      * @throws Exception default
      */
     private void testMultipleReaders(int iteration) throws Exception {
-        Iterator<IEventContainer<?>> iterator = store.getAllEvents();
+        //noinspection unchecked
+        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
 
         int index = 0;
         while (iterator.hasNext()) {
@@ -280,5 +308,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
         }
         index--;
         assertEquals(iteration, index);
+        iterator.close();
     }
+
 }

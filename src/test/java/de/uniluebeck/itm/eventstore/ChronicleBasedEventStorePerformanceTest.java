@@ -18,7 +18,7 @@ public class ChronicleBasedEventStorePerformanceTest {
     private static Logger log = LoggerFactory.
             getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
-	private static ChronicleBasedEventStore<String> store;
+	private static IEventStore<String> store;
 
 	private static final int WRITE_ITERATIONS = 10000000;
 
@@ -71,7 +71,7 @@ public class ChronicleBasedEventStorePerformanceTest {
 		final long start = System.currentTimeMillis();
 		final Random random = new Random(start);
 		try {
-			store = new ChronicleBasedEventStore(basePath, serializers, deserializers);
+			store = EventStoreFactory.<String>create().chronicleBasePath(basePath).serializers(serializers).deserializers(deserializers).build();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

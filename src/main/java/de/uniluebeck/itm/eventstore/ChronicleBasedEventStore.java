@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.eventstore;
 
-import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer;
 import de.uniluebeck.itm.util.serialization.MultiClassSerializationHelper;
@@ -16,61 +15,38 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.NotSerializableException;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 
-public class ChronicleBasedEventStore<T> implements IEventStore<T> {
+class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
     private static Logger log = LoggerFactory.
             getLogger(ChronicleBasedEventStore.class);
-    private final String chronicleBasePath;
-    private final Object writeLock;
+    private final Object writeLock = new Object();
     private final Object closeControlLock = new Object();
-    private final boolean readOnly;
+    private final EventStoreConfig config;
     private IndexedChronicle chronicle;
     private int openCount = 0;
 
     private MultiClassSerializationHelper<T> serializationHelper;
 
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
-                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers)
+    public ChronicleBasedEventStore(EventStoreConfig config)
             throws IOException, IllegalArgumentException, ClassNotFoundException {
-        this(chronicleBasePath, serializers, deserializers, false);
-
-    }
-
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
-                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers, boolean readOnly) throws IOException, IllegalArgumentException, ClassNotFoundException {
-        this(chronicleBasePath, serializers, deserializers, readOnly, ChronicleConfig.SMALL.dataBlockSize());
-    }
-
-    public ChronicleBasedEventStore(@Nonnull final String chronicleBasePath, final Map<Class<? extends T>, Function<? extends T, byte[]>> serializers,
-                                    Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers, boolean readOnly, int dataBlockSize)
-            throws IOException, IllegalArgumentException, ClassNotFoundException {
-        this.writeLock = new Object();
-        this.readOnly = readOnly;
-        this.chronicleBasePath = chronicleBasePath;
-        if (!readOnly) {
+        this.config = config;
+        if (!config.isReadOnly()) {
             incrementOpenCount();
         }
         try {
-            ChronicleConfig config = ChronicleConfig.SMALL.clone().dataBlockSize(dataBlockSize);
-            chronicle = new IndexedChronicle(chronicleBasePath, config);
+            ChronicleConfig chronicleConfig = ChronicleConfig.SMALL.clone().dataBlockSize(config.dataBlockSize());
+            chronicle = new IndexedChronicle(config.chronicleBasePath(), chronicleConfig);
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Can't create event store with base path " + chronicleBasePath);
+            throw new FileNotFoundException("Can't create event store with base path " + config.chronicleBasePath());
         }
 
-        if (deserializers.size() != serializers.size() || serializers.size() > 256) {
-            throw new IllegalArgumentException(
-                    "There must be the same amount of serializers and deserializers. Furthermore only up to 256 serializers and deserializers are supported"
-            );
-        }
-
-        File mappingFile = new File(chronicleBasePath + ".mapping");
-        BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.<T>loadOrCreateClassByteMap(serializers, deserializers, mappingFile);
-        serializationHelper = new MultiClassSerializationHelper<T>(serializers, deserializers, mapping);
+        File mappingFile = new File(config.chronicleBasePath() + ".mapping");
+        BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.<T>loadOrCreateClassByteMap(config.serializers(), config.deserializers(), mappingFile);
+        serializationHelper = new MultiClassSerializationHelper<T>(config.serializers(), config.deserializers(), mapping);
 
 
     }
@@ -104,7 +80,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     @Override
     public void storeEvent(@Nonnull T object, Class<T> type, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException {
-        if (readOnly) {
+        if (config.isReadOnly()) {
             throw new UnsupportedOperationException("Storing events is not allowed in read only mode");
         }
         synchronized (writeLock) {

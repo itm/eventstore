@@ -44,6 +44,7 @@ public class ChronicleBasedEventStoreTest extends TestCase {
                             return null;
                         }
                     }
+
                     @Override
                     public String toString() {
                         return "byte[] -> String";

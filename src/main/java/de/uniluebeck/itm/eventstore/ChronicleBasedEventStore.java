@@ -262,7 +262,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         @Override
         protected IEventContainer<T> readNextEvent() {
             IEventContainer<T> container = null;
-            while(true) {
+            while (true) {
                 if (reader.nextIndex()) {
                     long timestamp = reader.readLong();
                     if (config.isMonotonic() && timestamp > toTime) {

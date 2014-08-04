@@ -10,6 +10,7 @@ public class EventStoreFactory<T> {
 
 
     private EventStoreConfig<T> config;
+
     private EventStoreFactory() {
         config = new EventStoreConfig<T>();
         config.setReadOnly(false);

@@ -68,7 +68,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
             );
         }
 
-        File mappingFile = new File(chronicleBasePath+".mapping");
+        File mappingFile = new File(chronicleBasePath + ".mapping");
         BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.<T>loadOrCreateClassByteMap(serializers, deserializers, mappingFile);
         serializationHelper = new MultiClassSerializationHelper<T>(serializers, deserializers, mapping);
 
@@ -87,14 +87,23 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     @Override
     public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException, IllegalArgumentException {
+        storeEvent(object, System.currentTimeMillis());
+    }
+
+    @Override
+    public void storeEvent(@Nonnull T object, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException {
         // Object is of type T, so Class is Class<T>. No need to check!
         @SuppressWarnings("unchecked") Class<T> c = (Class<T>) object.getClass();
-        storeEvent(object, c);
-
+        storeEvent(object, c, timestamp);
     }
 
     @Override
     public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException, IllegalArgumentException {
+        storeEvent(object, type, System.currentTimeMillis());
+    }
+
+    @Override
+    public void storeEvent(@Nonnull T object, Class<T> type, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException {
         if (readOnly) {
             throw new UnsupportedOperationException("Storing events is not allowed in read only mode");
         }
@@ -109,7 +118,7 @@ public class ChronicleBasedEventStore<T> implements IEventStore<T> {
                 }
                 ExcerptAppender appender = chronicle.createAppender();
                 appender.startExcerpt(entrySize);
-                appender.writeLong(System.currentTimeMillis());
+                appender.writeLong(timestamp);
                 appender.write(serialized);
                 appender.finish();
             } catch (NullPointerException e) {

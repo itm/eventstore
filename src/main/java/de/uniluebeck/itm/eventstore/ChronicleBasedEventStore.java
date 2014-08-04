@@ -261,18 +261,30 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
         @Override
         protected IEventContainer<T> readNextEvent() {
-            if (reader.nextIndex()) {
-                long timestamp = reader.readLong();
-                if (timestamp > toTime) {
-                    reader.finish();
-                    return null;
+            IEventContainer<T> container = null;
+            while(true) {
+                if (reader.nextIndex()) {
+                    long timestamp = reader.readLong();
+                    if (config.isMonotonic() && timestamp > toTime) {
+                        // if event time is monotonic, stop if the current event is out of the time range
+                        break;
+                    } else if (timestamp <= toTime) {
+                        // if the timestamp is in range: matching event found -> return it
+                        byte[] event = new byte[(int) reader.remaining()];
+                        reader.readFully(event);
+                        T object = serializationHelper.deserialize(event);
+                        return new DefaultEventContainer<T>(object, timestamp);
+                    } else {
+                        // the found event is out of range but the order isn't monotonic -> we have to search for the next event in range
+                        continue;
+                    }
+                } else {
+                    // the reader is at the end of the chronicle -> finish (nothing found)
+                    break;
                 }
-                byte[] event = new byte[(int) reader.remaining()];
-                reader.readFully(event);
-                T object = serializationHelper.deserialize(event);
-                return new DefaultEventContainer<T>(object, timestamp);
             }
             reader.finish();
+
             return null;
         }
     }

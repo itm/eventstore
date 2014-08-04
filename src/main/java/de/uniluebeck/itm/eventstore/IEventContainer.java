@@ -5,7 +5,7 @@ package de.uniluebeck.itm.eventstore;
  */
 public interface IEventContainer<T> {
 
-	public T getEvent();
+	T getEvent();
 
-	public long getTimestamp();
+	long getTimestamp();
 }

@@ -19,6 +19,7 @@ public interface IEventStore<T> extends Closeable {
      */
     public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
+    public void storeEvent(@Nonnull final T object, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
     /**
      * Method for storing an object
@@ -31,6 +32,8 @@ public interface IEventStore<T> extends Closeable {
      */
     public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
+
+    public void storeEvent(@Nonnull final T object, final Class<T> type, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
     /**
      * Getting an iterator for events between two timestamps
      *

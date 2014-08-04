@@ -6,7 +6,7 @@ public class DefaultEventContainer<T> implements IEventContainer<T> {
 
 	private long timestamp;
 
-	DefaultEventContainer(T event, long time) {
+	public DefaultEventContainer(T event, long time) {
 		this.event = event;
 		this.timestamp = time;
 	}

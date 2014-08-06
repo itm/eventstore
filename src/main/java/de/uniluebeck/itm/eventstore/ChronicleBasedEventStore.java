@@ -31,7 +31,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
     private MultiClassSerializationHelper<T> serializationHelper;
 
-    public ChronicleBasedEventStore(EventStoreConfig config)
+    public ChronicleBasedEventStore(EventStoreConfig<T> config)
             throws IOException, IllegalArgumentException, ClassNotFoundException {
         this.config = config;
         if (!config.isReadOnly()) {
@@ -45,7 +45,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
 
         File mappingFile = new File(config.chronicleBasePath() + ".mapping");
-        BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.<T>loadOrCreateClassByteMap(config.serializers(), config.deserializers(), mappingFile);
+        BiMap<Class<? extends T>, Byte> mapping = MultiClassSerializationHelper.loadOrCreateClassByteMap(config.serializers(), config.deserializers(), mappingFile);
         serializationHelper = new MultiClassSerializationHelper<T>(config.serializers(), config.deserializers(), mapping);
 
 
@@ -261,7 +261,6 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
         @Override
         protected IEventContainer<T> readNextEvent() {
-            IEventContainer<T> container = null;
             while (true) {
                 if (reader.nextIndex()) {
                     long timestamp = reader.readLong();
@@ -274,10 +273,8 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
                         reader.readFully(event);
                         T object = serializationHelper.deserialize(event);
                         return new DefaultEventContainer<T>(object, timestamp);
-                    } else {
-                        // the found event is out of range but the order isn't monotonic -> we have to search for the next event in range
-                        continue;
                     }
+                    // the found event is out of range but the order isn't monotonic -> we have to search for the next event in range
                 } else {
                     // the reader is at the end of the chronicle -> finish (nothing found)
                     break;

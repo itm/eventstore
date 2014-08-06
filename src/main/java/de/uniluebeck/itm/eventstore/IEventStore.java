@@ -11,18 +11,35 @@ public interface IEventStore<T> extends Closeable {
 
     /**
      * Method for storing an object
+     * <p/>
+     * When using this method, the events timestamp is set to the current system time
      *
      * @param object an object to store
      * @throws java.io.IOException                     if the stream is broken or the event couldn't be serialized
      * @throws java.lang.UnsupportedOperationException if the event store is in read only mode
      * @throws java.lang.IllegalArgumentException      if the provided objects serialized form is larger than the block size of this event store
      */
-    public void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException, IllegalArgumentException;
+    void storeEvent(@Nonnull final T object) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
-    public void storeEvent(@Nonnull final T object, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
+
+    /**
+     * Method for storing an object with a specific timestamp
+     * <p/>
+     * When using this method, the events in the store are not guaranteed to be in monotonic order according to their timestamps.
+     * Hence config this event store as non monotonic. Otherwise the limited iterators may not work as expected.
+     *
+     * @param object    an object to store
+     * @param timestamp the events timestamp
+     * @throws java.io.IOException                     if the stream is broken or the event couldn't be serialized
+     * @throws java.lang.UnsupportedOperationException if the event store is in read only mode
+     * @throws java.lang.IllegalArgumentException      if the provided objects serialized form is larger than the block size of this event store
+     */
+    void storeEvent(@Nonnull final T object, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
     /**
      * Method for storing an object
+     * <p/>
+     * When using this method, the events timestamp is set to the current system time
      *
      * @param object an object to store
      * @param type   the type for which the serializer is stored.
@@ -30,10 +47,24 @@ public interface IEventStore<T> extends Closeable {
      * @throws java.lang.UnsupportedOperationException if the event store is in read only mode
      * @throws java.lang.IllegalArgumentException      if the provided objects serialized form is larger than the block size of this event store
      */
-    public void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException, IllegalArgumentException;
+    void storeEvent(@Nonnull final T object, final Class<T> type) throws IOException, UnsupportedOperationException, IllegalArgumentException;
 
 
-    public void storeEvent(@Nonnull final T object, final Class<T> type, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
+    /**
+     * Method for storing an object with a specific timestamp
+     * <p/>
+     * When using this method, the events in the store are not guaranteed to be in monotonic order according to their timestamps.
+     * Hence config this event store as non monotonic. Otherwise the limited iterators may not work as expected.
+     *
+     * @param object    an object to store
+     * @param type      the type for which the serializer is stored.
+     * @param timestamp the events timestamp
+     * @throws java.io.IOException                     if the stream is broken or the event couldn't be serialized
+     * @throws java.lang.UnsupportedOperationException if the event store is in read only mode
+     * @throws java.lang.IllegalArgumentException      if the provided objects serialized form is larger than the block size of this event store
+     */
+    void storeEvent(@Nonnull final T object, final Class<T> type, long timestamp) throws IOException, UnsupportedOperationException, IllegalArgumentException;
+
     /**
      * Getting an iterator for events between two timestamps
      *
@@ -42,7 +73,7 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    public CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
+    CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
 
     /**
      * Getting an iterator for events from a given timestamp until the last event in the storage
@@ -51,7 +82,7 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    public CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
+    CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
 
 
     /**
@@ -60,24 +91,26 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access starting with the first event in the storage
      * @throws IOException if the underlying stream is broken
      */
-    public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException;
+    CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException;
 
 
     /**
      * @see de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer#actualPayloadByteSize() for a description
      */
-    public long actualPayloadByteSize() throws IOException;
+    long actualPayloadByteSize() throws IOException;
 
     /**
      * Getter for the number of entries in this store
+     *
      * @return the number of events in this store
      */
-    public long size();
+    long size();
 
     /**
      * Checks if this store contains any events
+     *
      * @return true if the event store is empty (size == 0), false otherwise
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
 }

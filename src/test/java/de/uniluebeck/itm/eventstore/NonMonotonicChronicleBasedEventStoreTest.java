@@ -3,7 +3,6 @@ package de.uniluebeck.itm.eventstore;
 import com.google.common.base.Function;
 import net.openhft.chronicle.tools.ChronicleTools;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -98,10 +96,10 @@ public class NonMonotonicChronicleBasedEventStoreTest {
     }
 
     @Test
-    public void testEventsFoundIfOutOfOrder() throws Exception{
+    public void testEventsFoundIfOutOfOrder() throws Exception {
         long from = 1;
         long to = 20;
-        int[] values = {1, 2 , 3, 100, 110, 70, 75, 5, 9, 20, 30};
+        int[] values = {1, 2, 3, 100, 110, 70, 75, 5, 9, 20, 30};
 
         for (int value : values) {
             //noinspection unchecked
@@ -109,7 +107,7 @@ public class NonMonotonicChronicleBasedEventStoreTest {
         }
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from,to);
+        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
 
         for (int expected : values) {
             if (expected > to) {
@@ -126,10 +124,23 @@ public class NonMonotonicChronicleBasedEventStoreTest {
     }
 
     @Test
-    public void testEventsFoundIfInOrder() throws Exception{
+    public void testSizeAndEmpty() throws Exception {
+        assertEquals(0, store.size());
+        assertTrue(store.isEmpty());
+
+        for (int i = 0; i < 100; i++) {
+            //noinspection unchecked
+            store.storeEvent(BigInteger.valueOf(i));
+            assertEquals(i + 1, store.size());
+        }
+        assertFalse(store.isEmpty());
+    }
+
+    @Test
+    public void testEventsFoundIfInOrder() throws Exception {
         long from = 1;
         long to = 20;
-        int[] values = {1, 2 , 3, 4, 5, 6, 7, 8, 9, 15, 17, 17, 20, 50, 70};
+        int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 17, 17, 20, 50, 70};
 
         for (int value : values) {
             //noinspection unchecked
@@ -137,7 +148,7 @@ public class NonMonotonicChronicleBasedEventStoreTest {
         }
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from,to);
+        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
 
         for (int expected : values) {
             if (expected > to) {

@@ -5,7 +5,15 @@ package de.uniluebeck.itm.eventstore;
  */
 public interface IEventContainer<T> {
 
+    /**
+     * Returns the actual data of this object
+     * @return the object
+     */
 	T getEvent();
 
+    /**
+     * Returns the timestamp stored beside this event
+     * @return the events timestamp
+     */
 	long getTimestamp();
 }

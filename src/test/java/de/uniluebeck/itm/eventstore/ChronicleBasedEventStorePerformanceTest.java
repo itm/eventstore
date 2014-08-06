@@ -70,6 +70,7 @@ public class ChronicleBasedEventStorePerformanceTest {
         final long start = System.currentTimeMillis();
         final Random random = new Random(start);
         try {
+            //noinspection unchecked
             store = EventStoreFactory.<String>create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
             new Thread(new Runnable() {
                 @Override
@@ -83,6 +84,7 @@ public class ChronicleBasedEventStorePerformanceTest {
                         e.printStackTrace();
                     }
                     log.info("Writing finished!");
+                    writeFinished = true;
                 }
             }, "Writer"
             ).start();
@@ -94,7 +96,7 @@ public class ChronicleBasedEventStorePerformanceTest {
                         log.trace("\tread iteration = " + i);
                         int offset = random.nextInt((int) (System.currentTimeMillis() - start));
 
-                        Iterator<IEventContainer<String>> iterator = null;
+                        Iterator<IEventContainer<String>> iterator;
                         try {
                             iterator = store.getEventsFromTimestamp(start + offset);
                             while (iterator.hasNext()) {
@@ -105,6 +107,7 @@ public class ChronicleBasedEventStorePerformanceTest {
                         }
                     }
                     log.info("Reading finished");
+                    readFinished = true;
                 }
             }, "Reader1"
             ).start();

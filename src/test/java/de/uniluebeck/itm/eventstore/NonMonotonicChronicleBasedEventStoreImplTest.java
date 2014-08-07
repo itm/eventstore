@@ -17,9 +17,9 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class NonMonotonicChronicleBasedEventStoreTest {
+public class NonMonotonicChronicleBasedEventStoreImplTest {
 
-    private IEventStore store;
+    private EventStore store;
 
     @Before
     public void setUp() throws Exception {
@@ -107,14 +107,14 @@ public class NonMonotonicChronicleBasedEventStoreTest {
         }
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
+        CloseableIterator<EventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
 
         for (int expected : values) {
             if (expected > to) {
                 continue;
             }
             assertTrue(iterator.hasNext());
-            IEventContainer container = iterator.next();
+            EventContainer container = iterator.next();
             assertNotNull(container);
             assertEquals(expected, container.getTimestamp());
         }
@@ -148,14 +148,14 @@ public class NonMonotonicChronicleBasedEventStoreTest {
         }
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
+        CloseableIterator<EventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
 
         for (int expected : values) {
             if (expected > to) {
                 continue;
             }
             assertTrue(iterator.hasNext());
-            IEventContainer container = iterator.next();
+            EventContainer container = iterator.next();
             assertNotNull(container);
             assertEquals(expected, container.getTimestamp());
         }

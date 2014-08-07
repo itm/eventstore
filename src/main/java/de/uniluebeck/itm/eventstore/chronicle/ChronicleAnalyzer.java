@@ -1,16 +1,17 @@
 package de.uniluebeck.itm.eventstore.chronicle;
 
 
+import de.uniluebeck.itm.eventstore.adapter.ChronicleAdapter;
 import net.openhft.chronicle.ExcerptTailer;
 import net.openhft.chronicle.IndexedChronicle;
 
 import java.io.IOException;
 
-public class IndexedChronicleAnalyzer {
+public class ChronicleAnalyzer {
 
-    private final IndexedChronicle chronicle;
+    private final ChronicleAdapter chronicle;
 
-    public IndexedChronicleAnalyzer(final IndexedChronicle chronicle) throws IOException {
+    public ChronicleAnalyzer(final ChronicleAdapter chronicle) throws IOException {
         this.chronicle = chronicle;
     }
 

@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * This interface contains all methods needed for using the event store
  */
-public interface IEventStore<T> extends Closeable {
+public interface EventStore<T> extends Closeable {
 
     /**
      * Method for storing an object
@@ -73,7 +73,7 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
+    CloseableIterator<EventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException;
 
     /**
      * Getting an iterator for events from a given timestamp until the last event in the storage
@@ -82,7 +82,7 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access
      * @throws java.io.IOException if the underlying stream is broken
      */
-    CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
+    CloseableIterator<EventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException;
 
 
     /**
@@ -91,11 +91,11 @@ public interface IEventStore<T> extends Closeable {
      * @return an iterator for sequential read access starting with the first event in the storage
      * @throws IOException if the underlying stream is broken
      */
-    CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException;
+    CloseableIterator<EventContainer<T>> getAllEvents() throws IOException;
 
 
     /**
-     * @see de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer#actualPayloadByteSize() for a description
+     * @see de.uniluebeck.itm.eventstore.chronicle.ChronicleAnalyzer#actualPayloadByteSize() for a description
      */
     long actualPayloadByteSize() throws IOException;
 

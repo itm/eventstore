@@ -1,6 +1,9 @@
 package de.uniluebeck.itm.eventstore.chronicle;
 
 
+import de.uniluebeck.itm.eventstore.adapter.ChronicleAdapter;
+import de.uniluebeck.itm.eventstore.adapter.IndexedChronicleAdapterImpl;
+import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.IndexedChronicle;
 import net.openhft.chronicle.tools.ChronicleTools;
@@ -12,19 +15,18 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 
-public class IndexedChronicleAnalyzerTest {
+public class ChronicleAnalyzerTest {
 
-    private IndexedChronicleAnalyzer analyzer;
-    private IndexedChronicle chronicle;
+    private ChronicleAnalyzer analyzer;
+    private ChronicleAdapter chronicle;
 
     @Before
     public void setUp() throws Exception {
 
         String basePath = System.getProperty("java.io.tmpdir") + "/IndexedChronicleAnalyzerTest";
         ChronicleTools.deleteOnExit(basePath);
-        chronicle = new IndexedChronicle(basePath);
-
-        analyzer = new IndexedChronicleAnalyzer(chronicle);
+        chronicle = new IndexedChronicleAdapterImpl(basePath, ChronicleConfig.DEFAULT.clone());
+        analyzer = new ChronicleAnalyzer(chronicle);
     }
 
     @Test

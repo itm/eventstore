@@ -18,9 +18,9 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
-public class MonotonicChronicleBasedEventStoreTest {
+public class MonotonicChronicleBasedEventStoreImplTest {
 
-    private IEventStore store;
+    private EventStore store;
 
     @Before
     public void setUp() throws Exception {
@@ -110,11 +110,11 @@ public class MonotonicChronicleBasedEventStoreTest {
         //noinspection unchecked
         store.storeEvent("Test");
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(start);
+        CloseableIterator<EventContainer<?>> iterator = store.getEventsFromTimestamp(start);
         assertNotNull(iterator);
 
         assertTrue(iterator.hasNext());
-        IEventContainer<?> event = iterator.next();
+        EventContainer<?> event = iterator.next();
         assertNotNull(event);
 
         assertEquals("The deserialized event is different from original", test, event.getEvent());
@@ -142,11 +142,11 @@ public class MonotonicChronicleBasedEventStoreTest {
         }
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getEventsFromTimestamp(timestamp);
+        CloseableIterator<EventContainer<?>> iterator = store.getEventsFromTimestamp(timestamp);
 
         int index = 0;
         while (iterator.hasNext()) {
-            IEventContainer<?> event = iterator.next();
+            EventContainer<?> event = iterator.next();
             assertTrue(event.getTimestamp() >= timestamp);
             assertNotNull(event);
             assertEquals("Test" + index, event.getEvent());
@@ -185,11 +185,11 @@ public class MonotonicChronicleBasedEventStoreTest {
             store.storeEvent("After" + i);
         }
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getEventsBetweenTimestamps(from, to);
+        CloseableIterator<EventContainer<?>> iterator = store.getEventsBetweenTimestamps(from, to);
         assertTrue(iterator.hasNext());
         int index = 0;
         while (iterator.hasNext()) {
-            IEventContainer<?> event = iterator.next();
+            EventContainer<?> event = iterator.next();
             assertNotNull(event);
             assertTrue(event.getTimestamp() >= from);
             assertTrue(event.getTimestamp() <= to);
@@ -205,7 +205,7 @@ public class MonotonicChronicleBasedEventStoreTest {
     @Test
     public void testReadEmptyStore() throws Exception {
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
+        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
         assertFalse(iterator.hasNext());
         iterator.close();
     }
@@ -218,11 +218,11 @@ public class MonotonicChronicleBasedEventStoreTest {
             store.storeEvent(BigInteger.valueOf(i));
         }
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
+        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
 
         int index = 0;
         while (iterator.hasNext()) {
-            IEventContainer<?> event = iterator.next();
+            EventContainer<?> event = iterator.next();
             assertNotNull(event);
             BigInteger next = (BigInteger) event.getEvent();
             assertEquals(BigInteger.valueOf(index), next);
@@ -247,10 +247,10 @@ public class MonotonicChronicleBasedEventStoreTest {
         store.storeEvent(c);
 
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
+        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
         assertNotNull(iterator);
         assertTrue(iterator.hasNext());
-        IEventContainer<?> event = iterator.next();
+        EventContainer<?> event = iterator.next();
         assertNotNull(event);
         assertEquals(a, event.getEvent());
 
@@ -290,11 +290,11 @@ public class MonotonicChronicleBasedEventStoreTest {
      */
     private void testMultipleReaders(int iteration) throws Exception {
         //noinspection unchecked
-        CloseableIterator<IEventContainer<?>> iterator = store.getAllEvents();
+        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
 
         int index = 0;
         while (iterator.hasNext()) {
-            IEventContainer<?> event = iterator.next();
+            EventContainer<?> event = iterator.next();
             assertNotNull(event);
             BigInteger next = (BigInteger) event.getEvent();
             assertEquals(BigInteger.valueOf(index), next);

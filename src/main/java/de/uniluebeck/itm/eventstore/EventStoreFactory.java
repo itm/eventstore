@@ -1,8 +1,12 @@
 package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
+import de.uniluebeck.itm.eventstore.adapter.ChronicleAdapter;
+import de.uniluebeck.itm.eventstore.adapter.IndexedChronicleAdapterImpl;
+import de.uniluebeck.itm.eventstore.adapter.VanillaChronicleAdapterImpl;
 import net.openhft.chronicle.ChronicleConfig;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -54,9 +58,17 @@ public class EventStoreFactory<T> {
         return this;
     }
 
-    public IEventStore<T> build() throws IllegalArgumentException, IOException, ClassNotFoundException {
+    public EventStore<T> build() throws IllegalArgumentException, IOException, ClassNotFoundException {
         if (config.isValid()) {
-            return new ChronicleBasedEventStore<T>(config);
+            try {
+
+            ChronicleAdapter chronicle = config.isCycling() ?
+                    new VanillaChronicleAdapterImpl(config.chronicleBasePath(), config.vanillaChronicleConfig()) :
+                    new IndexedChronicleAdapterImpl(config.chronicleBasePath(), config.defaultChronicleConfig());
+            return new ChronicleBasedEventStoreImpl<T>(chronicle, config);
+            } catch (IOException e) {
+                throw new FileNotFoundException("Can't create event store with base path " + config.chronicleBasePath());
+            }
         } else {
             return null;
         }

@@ -17,7 +17,7 @@ public class ChronicleBasedEventStorePerformanceTest {
     private static Logger log = LoggerFactory.
             getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
-    private static IEventStore<String> store;
+    private static EventStore<String> store;
 
     private static final int WRITE_ITERATIONS = 10000000;
 
@@ -96,7 +96,7 @@ public class ChronicleBasedEventStorePerformanceTest {
                         log.trace("\tread iteration = " + i);
                         int offset = random.nextInt((int) (System.currentTimeMillis() - start));
 
-                        Iterator<IEventContainer<String>> iterator;
+                        Iterator<EventContainer<String>> iterator;
                         try {
                             iterator = store.getEventsFromTimestamp(start + offset);
                             while (iterator.hasNext()) {

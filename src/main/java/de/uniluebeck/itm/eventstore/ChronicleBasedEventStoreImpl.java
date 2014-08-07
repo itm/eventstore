@@ -1,47 +1,40 @@
 package de.uniluebeck.itm.eventstore;
 
 import com.google.common.collect.BiMap;
-import de.uniluebeck.itm.eventstore.chronicle.IndexedChronicleAnalyzer;
+import de.uniluebeck.itm.eventstore.adapter.ChronicleAdapter;
+import de.uniluebeck.itm.eventstore.chronicle.ChronicleAnalyzer;
 import de.uniluebeck.itm.util.serialization.MultiClassSerializationHelper;
-import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.ExcerptAppender;
 import net.openhft.chronicle.ExcerptTailer;
-import net.openhft.chronicle.IndexedChronicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.util.NoSuchElementException;
 
 
-class ChronicleBasedEventStore<T> implements IEventStore<T> {
+class ChronicleBasedEventStoreImpl<T> implements EventStore<T> {
 
     private static final int TIMESTAMP_SIZE = Long.SIZE / Byte.SIZE;
     private static Logger log = LoggerFactory.
-            getLogger(ChronicleBasedEventStore.class);
+            getLogger(ChronicleBasedEventStoreImpl.class);
     private final Object writeLock = new Object();
     private final Object closeControlLock = new Object();
     private final EventStoreConfig config;
-    private IndexedChronicle chronicle;
+    private ChronicleAdapter chronicle;
     private int openCount = 0;
 
     private MultiClassSerializationHelper<T> serializationHelper;
 
-    public ChronicleBasedEventStore(EventStoreConfig<T> config)
+    public ChronicleBasedEventStoreImpl(ChronicleAdapter chronicle, EventStoreConfig<T> config)
             throws IOException, IllegalArgumentException, ClassNotFoundException {
         this.config = config;
+        this.chronicle = chronicle;
         if (!config.isReadOnly()) {
             incrementOpenCount();
-        }
-        try {
-            ChronicleConfig chronicleConfig = ChronicleConfig.SMALL.clone().dataBlockSize(config.dataBlockSize());
-            chronicle = new IndexedChronicle(config.chronicleBasePath(), chronicleConfig);
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Can't create event store with base path " + config.chronicleBasePath());
         }
 
         File mappingFile = new File(config.chronicleBasePath() + ".mapping");
@@ -104,23 +97,23 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
     }
 
     @Override
-    public CloseableIterator<IEventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
+    public CloseableIterator<EventContainer<T>> getEventsBetweenTimestamps(long fromTime, long toTime) throws IOException {
         return new LimitedEventIterator(fromTime, toTime);
     }
 
     @Override
-    public CloseableIterator<IEventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException {
+    public CloseableIterator<EventContainer<T>> getEventsFromTimestamp(long fromTime) throws IOException {
         return new InfiniteEventIterator(fromTime);
     }
 
     @Override
-    public CloseableIterator<IEventContainer<T>> getAllEvents() throws IOException {
+    public CloseableIterator<EventContainer<T>> getAllEvents() throws IOException {
         return new InfiniteEventIterator(0);
     }
 
     @Override
     public long actualPayloadByteSize() throws IOException {
-        return new IndexedChronicleAnalyzer(this.chronicle).actualPayloadByteSize();
+        return new ChronicleAnalyzer(this.chronicle).actualPayloadByteSize();
     }
 
     @Override
@@ -154,12 +147,12 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         super.finalize();
     }
 
-    private abstract class AbstractEventIterator implements CloseableIterator<IEventContainer<T>> {
+    private abstract class AbstractEventIterator implements CloseableIterator<EventContainer<T>> {
 
         protected ExcerptTailer reader;
         protected long fromTime;
 
-        protected IEventContainer<T> next;
+        protected EventContainer<T> next;
 
         public AbstractEventIterator(long fromTime) throws IOException {
             this.fromTime = fromTime;
@@ -169,7 +162,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
 
         @Override
         public void close() throws IOException {
-            ChronicleBasedEventStore.this.close();
+            ChronicleBasedEventStoreImpl.this.close();
         }
 
         private boolean windToTimestamp(long timestamp) {
@@ -181,14 +174,14 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
                     reader.readFully(event);
                     T object = serializationHelper.deserialize(event);
 
-                    next = new DefaultEventContainer<T>(object, timestamp);
+                    next = new DefaultEventContainerImpl<T>(object, timestamp);
                     return true;
                 }
             }
             return false;
         }
 
-        protected abstract IEventContainer<T> readNextEvent();
+        protected abstract EventContainer<T> readNextEvent();
 
         protected void finishSetup() {
             if (fromTime > 0) {
@@ -208,9 +201,9 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
 
         @Override
-        public IEventContainer<T> next() {
+        public EventContainer<T> next() {
             if (next != null) {
-                IEventContainer<T> event = next;
+                EventContainer<T> event = next;
                 next = readNextEvent();
                 return event;
             }
@@ -233,13 +226,13 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
 
         @Override
-        protected IEventContainer<T> readNextEvent() {
+        protected EventContainer<T> readNextEvent() {
             if (reader.nextIndex()) {
                 long timestamp = reader.readLong();
                 byte[] event = new byte[(int) reader.remaining()];
                 reader.readFully(event);
                 T object = serializationHelper.deserialize(event);
-                return new DefaultEventContainer<T>(object, timestamp);
+                return new DefaultEventContainerImpl<T>(object, timestamp);
             }
             reader.finish();
             return null;
@@ -260,7 +253,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
         }
 
         @Override
-        protected IEventContainer<T> readNextEvent() {
+        protected EventContainer<T> readNextEvent() {
             while (true) {
                 if (reader.nextIndex()) {
                     long timestamp = reader.readLong();
@@ -272,7 +265,7 @@ class ChronicleBasedEventStore<T> implements IEventStore<T> {
                         byte[] event = new byte[(int) reader.remaining()];
                         reader.readFully(event);
                         T object = serializationHelper.deserialize(event);
-                        return new DefaultEventContainer<T>(object, timestamp);
+                        return new DefaultEventContainerImpl<T>(object, timestamp);
                     }
                     // the found event is out of range but the order isn't monotonic -> we have to search for the next event in range
                 } else {

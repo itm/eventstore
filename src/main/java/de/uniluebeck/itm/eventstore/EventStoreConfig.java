@@ -5,6 +5,7 @@ import de.uniluebeck.itm.eventstore.adapter.ChronicleConfigAdapter;
 import de.uniluebeck.itm.eventstore.adapter.ChronicleConfigAdapterImpl;
 import de.uniluebeck.itm.eventstore.adapter.VanillaChronicleConfigAdapterImpl;
 import net.openhft.chronicle.ChronicleConfig;
+import net.openhft.chronicle.VanillaChronicle;
 import net.openhft.chronicle.VanillaChronicleConfig;
 
 import java.util.ArrayList;
@@ -16,17 +17,19 @@ class EventStoreConfig<T> {
     private boolean readOnly;
     private boolean monotonic;
     private boolean cycling;
-    private String cycleFormat;
-    private int cycleLength;
     private Map<Class<? extends T>, Function<? extends T, byte[]>> serializers;
     private Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers;
-    private int dataBlockSize;
+
+    private VanillaChronicleConfig vanillaChronicleConfig;
+    private ChronicleConfig defaultChronicleConfig;
 
     public EventStoreConfig() {
+
+        vanillaChronicleConfig = VanillaChronicleConfig.DEFAULT.clone();
+        defaultChronicleConfig = ChronicleConfig.SMALL.clone();
         readOnly = false;
-        dataBlockSize = ChronicleConfig.SMALL.dataBlockSize();
-        cycleFormat = VanillaChronicleConfig.DEFAULT.cycleFormat();
-        cycleLength = VanillaChronicleConfig.DEFAULT.cycleLength();
+        monotonic = true;
+        cycling = false;
     }
 
     public void setChronicleBasePath(String chronicleBasePath) {
@@ -46,7 +49,8 @@ class EventStoreConfig<T> {
     }
 
     public void setDataBlockSize(int dataBlockSize) {
-        this.dataBlockSize = dataBlockSize;
+        vanillaChronicleConfig.dataBlockSize(dataBlockSize);
+        defaultChronicleConfig.dataBlockSize(dataBlockSize);
     }
 
     public void setMonotonic(boolean monotonic) {
@@ -55,21 +59,40 @@ class EventStoreConfig<T> {
 
 
     public String cycleFormat() {
-        return cycleFormat;
+        return vanillaChronicleConfig.cycleFormat();
     }
 
     public void setCycleFormat(String cycleFormat) {
         cycling = true;
-        this.cycleFormat = cycleFormat;
+        vanillaChronicleConfig.cycleFormat(cycleFormat);
     }
 
     public int cycleLength() {
-        return cycleLength;
+        return vanillaChronicleConfig.cycleLength();
     }
 
     public void setCycleLength(int cycleLength) {
         cycling = true;
-        this.cycleLength = cycleLength;
+        vanillaChronicleConfig.cycleLength(cycleLength);
+    }
+
+    public long entriesPerCycle() {
+        return vanillaChronicleConfig.entriesPerCycle();
+    }
+
+    public void setEntriesPerCycle(long entriesPerCycle) {
+        cycling = true;
+        vanillaChronicleConfig.entriesPerCycle(entriesPerCycle);
+    }
+
+    public void setVanillaChronicleConfig(VanillaChronicleConfig vanillaChronicleConfig) {
+        cycling = true;
+        this.vanillaChronicleConfig = vanillaChronicleConfig;
+    }
+
+    public void setDefaultChronicleConfig(ChronicleConfig defaultChronicleConfig) {
+        cycling = false;
+        this.defaultChronicleConfig = defaultChronicleConfig;
     }
 
     public String chronicleBasePath() {
@@ -97,7 +120,7 @@ class EventStoreConfig<T> {
     }
 
     public int dataBlockSize() {
-        return dataBlockSize;
+        return isCycling() ? (int) vanillaChronicleConfig.dataBlockSize() : defaultChronicleConfig.dataBlockSize();
     }
 
 
@@ -111,7 +134,7 @@ class EventStoreConfig<T> {
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
         }
-        return VanillaChronicleConfig.DEFAULT.clone().cycleFormat(cycleFormat).cycleLength(cycleLength).dataBlockSize(dataBlockSize);
+        return vanillaChronicleConfig;
     }
 
     public ChronicleConfig defaultChronicleConfig() throws IllegalStateException {
@@ -124,7 +147,7 @@ class EventStoreConfig<T> {
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
         }
-        return ChronicleConfig.SMALL.clone().dataBlockSize(dataBlockSize);
+        return defaultChronicleConfig;
     }
 
     public boolean isValid() throws IllegalArgumentException {
@@ -162,4 +185,7 @@ class EventStoreConfig<T> {
     }
 
 
+    public void setCycling(boolean cycling) {
+        this.cycling = cycling;
+    }
 }

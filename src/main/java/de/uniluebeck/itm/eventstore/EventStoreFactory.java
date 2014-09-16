@@ -92,6 +92,10 @@ public class EventStoreFactory<T> {
         if (config.isValid()) {
             try {
 
+                if (config.isCycling()) {
+                    // FIXME remove this after fixing vanilla issues
+                    throw new UnsupportedOperationException("Cycling event stores are not supported yet");
+                }
             ChronicleAdapter chronicle = config.isCycling() ?
                     new VanillaChronicleAdapterImpl(config.chronicleBasePath(), config.vanillaChronicleConfig()) :
                     new IndexedChronicleAdapterImpl(config.chronicleBasePath(), config.defaultChronicleConfig());

@@ -29,7 +29,7 @@
         <dependency>
             <groupId>de.uniluebeck.itm.util</groupId>
             <artifactId>serialization</artifactId>
-            <version>0.7-SNAPSHOT</version>
+            <version>0.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

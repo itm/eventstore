@@ -2,6 +2,7 @@ package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
 import net.openhft.chronicle.tools.ChronicleTools;
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class ChronicleBasedEventStorePerformanceTest {
     private static Logger log = LoggerFactory.
@@ -19,15 +21,15 @@ public class ChronicleBasedEventStorePerformanceTest {
 
     private static EventStore<String> store;
 
-    private static final int WRITE_ITERATIONS = 10000000;
+    private static final int WRITE_ITERATIONS = 1000000;
 
-    private static final int READ_ITERATIONS = 10000000;
+    private static final int READ_ITERATIONS = 1000;
 
-    private static boolean readFinished = false;
 
-    private static boolean writeFinished = false;
+    private static final Semaphore semaphore = new Semaphore(0);
 
     public static void main(String... args) {
+        BasicConfigurator.configure();
         Map<Class<?>, Function<?, byte[]>> serializers = new HashMap<Class<?>, Function<?, byte[]>>();
         serializers.put(String.class, new Function<String, byte[]>() {
                     @Override
@@ -75,6 +77,7 @@ public class ChronicleBasedEventStorePerformanceTest {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    long time = System.nanoTime();
                     try {
                         for (int i = 0; i < WRITE_ITERATIONS; i++) {
                             log.trace("\twrite iteration = " + i);
@@ -83,8 +86,9 @@ public class ChronicleBasedEventStorePerformanceTest {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    log.info("Writing finished!");
-                    writeFinished = true;
+                    time = System.nanoTime() - time;
+                    log.info("Writing finished! [TIME: {} ns, ITERATIONS: {}, AVG: {} ns]", time, WRITE_ITERATIONS, time / WRITE_ITERATIONS);
+                    semaphore.release();
                 }
             }, "Writer"
             ).start();
@@ -92,6 +96,8 @@ public class ChronicleBasedEventStorePerformanceTest {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    long time = System.nanoTime();
+                    long totalEntriesRead = 0;
                     for (int i = 0; i < READ_ITERATIONS; i++) {
                         log.trace("\tread iteration = " + i);
                         int offset = random.nextInt((int) (System.currentTimeMillis() - start));
@@ -100,30 +106,33 @@ public class ChronicleBasedEventStorePerformanceTest {
                         try {
                             iterator = store.getEventsFromTimestamp(start + offset);
                             while (iterator.hasNext()) {
+                                totalEntriesRead++;
                                 iterator.next().getEvent();
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-                    log.info("Reading finished");
-                    readFinished = true;
+                    time = System.nanoTime() - time;
+
+                    log.info("Reading finished! [TIME: {} ns, ENTRIES: {}, AVG: {} ns]", time, totalEntriesRead, time / totalEntriesRead);
+                    semaphore.release();
                 }
             }, "Reader1"
             ).start();
 
-            while (!(writeFinished && readFinished)) {
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            semaphore.acquire(2);
+
+
         } catch (IOException e) {
             log.error("Can't create chronicle", e);
         } catch (ClassNotFoundException e) {
             log.error("Can't create chronicle. Serializer Problem!", e);
+        } catch (InterruptedException e) {
+            log.warn("Interrupt occurred.", e);
         }
+
+        log.info("Test completed!");
     }
 
 }

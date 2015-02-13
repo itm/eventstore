@@ -9,14 +9,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
-import static com.google.monitoring.runtime.instrumentation.common.com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class ChronicleBasedEventStorePerformanceTest {
 

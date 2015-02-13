@@ -14,31 +14,137 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.monitoring.runtime.instrumentation.common.com.google.common.collect.Maps.newHashMap;
 
 public class ChronicleBasedEventStorePerformanceTest {
-    private static Logger log = LoggerFactory.
-            getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
-    private static EventStore<String> store;
+    static {
+        BasicConfigurator.configure();
+    }
+
+    private static Logger log = LoggerFactory.getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
     private static final int WRITE_ITERATIONS = 1000000;
 
     private static final int READ_ITERATIONS = 1000;
 
-
     private static final Semaphore semaphore = new Semaphore(0);
 
     public static void main(String... args) {
-        BasicConfigurator.configure();
-        Map<Class<?>, Function<?, byte[]>> serializers = new HashMap<Class<?>, Function<?, byte[]>>();
-        serializers.put(String.class, new Function<String, byte[]>() {
-                    @Override
-                    public byte[] apply(String string) {
-                        return string.getBytes();
+
+        final EventStore<String> store = createEventStore(createSerializers(), createDeserializers());
+
+        final long start = System.currentTimeMillis();
+        final Random random = new Random(start);
+
+        try {
+
+            // writerThread will create 1 million entries and release the semaphore
+            // readerThread will read 1000 times all entries from random start indices
+
+            Thread writerThread = createWriterThread(store);
+            Thread readerThread = createReaderThread(store, start, random);
+
+            writerThread.start();
+            readerThread.start();
+
+            semaphore.acquire(2);
+
+        } catch (InterruptedException e) {
+            log.warn("Interrupt occurred.", e);
+        }
+
+        log.info("Test completed!");
+    }
+
+    private static Thread createReaderThread(final EventStore<String> store, final long start, final Random random) {
+        return new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                long time = System.nanoTime();
+                long totalEntriesRead = 0;
+
+                String dummy = "";
+                for (int i = 0; i < READ_ITERATIONS; i++) {
+
+                    log.trace("\tread iteration = " + i);
+
+                    long randomTimestampInChronicle = start + random.nextInt((int) (System.currentTimeMillis() - start));
+
+                    Iterator<EventContainer<String>> iterator;
+                    try {
+                        iterator = store.getEventsFromTimestamp(randomTimestampInChronicle);
+                        while (iterator.hasNext()) {
+                            totalEntriesRead++;
+                            dummy = iterator.next().getEvent();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
+                time = System.nanoTime() - time;
+
+                System.out.println(dummy);
+
+                double seconds = (double) time / 1000000000;
+                log.info("Reading finished! [TIME: {} ns, ENTRIES: {}, AVG: {} ns, ENTRIES/S: {}]",
+                        seconds,
+                        totalEntriesRead,
+                        time / totalEntriesRead,
+                        (double) totalEntriesRead / seconds
+                );
+
+                semaphore.release();
+            }
+        }, "Reader1"
         );
-        Map<Class<?>, Function<byte[], ?>> deserializers = new HashMap<Class<?>, Function<byte[], ?>>();
+    }
+
+    private static Thread createWriterThread(final EventStore<String> store) {
+        return new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                long time = System.nanoTime();
+                try {
+                    for (int i = 0; i < WRITE_ITERATIONS; i++) {
+                        log.trace("\twrite iteration = " + i);
+                        store.storeEvent("Test" + i);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                time = System.nanoTime() - time;
+                double seconds = (double) time / 1000000000;
+                log.info("Writing finished! [TIME: {} ns, ITERATIONS: {}, AVG: {} ns, ENTRIES/S: {}]",
+                        time,
+                        WRITE_ITERATIONS,
+                        time / WRITE_ITERATIONS,
+                        (double) WRITE_ITERATIONS / seconds
+                );
+                semaphore.release();
+            }
+        }, "Writer"
+        );
+    }
+
+    private static EventStore<String> createEventStore(Map<Class<?>, Function<?, byte[]>> serializers, Map<Class<?>, Function<byte[], ?>> deserializers) {
+        final String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
+        ChronicleTools.deleteOnExit(basePath);
+        try {
+            //noinspection unchecked
+            return EventStoreFactory.<String>create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
+        } catch (Exception e) {
+            log.error("Exception while creating EventStore: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Map<Class<?>, Function<byte[], ?>> createDeserializers() {
+        Map<Class<?>, Function<byte[], ?>> deserializers = newHashMap();
         deserializers.put(String.class, new Function<byte[], String>() {
                     @Override
                     public String apply(byte[] bytes) {
@@ -50,15 +156,6 @@ public class ChronicleBasedEventStorePerformanceTest {
                     }
                 }
         );
-
-        serializers.put(BigInteger.class, new Function<BigInteger, byte[]>() {
-                    @Override
-                    public byte[] apply(BigInteger o) {
-                        return o.toByteArray();
-                    }
-                }
-        );
-
         deserializers.put(BigInteger.class, new Function<byte[], BigInteger>() {
                     @Override
                     public BigInteger apply(byte[] bytes) {
@@ -66,73 +163,26 @@ public class ChronicleBasedEventStorePerformanceTest {
                     }
                 }
         );
+        return deserializers;
+    }
 
-        String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
-        ChronicleTools.deleteOnExit(basePath);
-        final long start = System.currentTimeMillis();
-        final Random random = new Random(start);
-        try {
-            //noinspection unchecked
-            store = EventStoreFactory.<String>create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    long time = System.nanoTime();
-                    try {
-                        for (int i = 0; i < WRITE_ITERATIONS; i++) {
-                            log.trace("\twrite iteration = " + i);
-                            store.storeEvent("Test" + i);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+    private static Map<Class<?>, Function<?, byte[]>> createSerializers() {
+        Map<Class<?>, Function<?, byte[]>> serializers = newHashMap();
+        serializers.put(String.class, new Function<String, byte[]>() {
+                    @Override
+                    public byte[] apply(String string) {
+                        return string.getBytes();
                     }
-                    time = System.nanoTime() - time;
-                    log.info("Writing finished! [TIME: {} ns, ITERATIONS: {}, AVG: {} ns]", time, WRITE_ITERATIONS, time / WRITE_ITERATIONS);
-                    semaphore.release();
                 }
-            }, "Writer"
-            ).start();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    long time = System.nanoTime();
-                    long totalEntriesRead = 0;
-                    for (int i = 0; i < READ_ITERATIONS; i++) {
-                        log.trace("\tread iteration = " + i);
-                        int offset = random.nextInt((int) (System.currentTimeMillis() - start));
-
-                        Iterator<EventContainer<String>> iterator;
-                        try {
-                            iterator = store.getEventsFromTimestamp(start + offset);
-                            while (iterator.hasNext()) {
-                                totalEntriesRead++;
-                                iterator.next().getEvent();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+        );
+        serializers.put(BigInteger.class, new Function<BigInteger, byte[]>() {
+                    @Override
+                    public byte[] apply(BigInteger o) {
+                        return o.toByteArray();
                     }
-                    time = System.nanoTime() - time;
-
-                    log.info("Reading finished! [TIME: {} ns, ENTRIES: {}, AVG: {} ns]", time, totalEntriesRead, time / totalEntriesRead);
-                    semaphore.release();
                 }
-            }, "Reader1"
-            ).start();
-
-            semaphore.acquire(2);
-
-
-        } catch (IOException e) {
-            log.error("Can't create chronicle", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Can't create chronicle. Serializer Problem!", e);
-        } catch (InterruptedException e) {
-            log.warn("Interrupt occurred.", e);
-        }
-
-        log.info("Test completed!");
+        );
+        return serializers;
     }
 
 }

@@ -1,15 +1,13 @@
 package de.uniluebeck.itm.eventstore;
 
 import com.google.common.base.Function;
-import de.uniluebeck.itm.eventstore.adapter.ChronicleConfigAdapter;
-import de.uniluebeck.itm.eventstore.adapter.ChronicleConfigAdapterImpl;
-import de.uniluebeck.itm.eventstore.adapter.VanillaChronicleConfigAdapterImpl;
 import net.openhft.chronicle.ChronicleConfig;
-import net.openhft.chronicle.VanillaChronicle;
 import net.openhft.chronicle.VanillaChronicleConfig;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 class EventStoreConfig<T> {
 
@@ -17,8 +15,8 @@ class EventStoreConfig<T> {
     private boolean readOnly;
     private boolean monotonic;
     private boolean cycling;
-    private Map<Class<? extends T>, Function<? extends T, byte[]>> serializers;
-    private Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers;
+    private Map<Class<? extends T>, Function<? extends T, byte[]>> serializers = newHashMap();
+    private Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers = newHashMap();
 
     private VanillaChronicleConfig vanillaChronicleConfig;
     private ChronicleConfig defaultChronicleConfig;
@@ -40,12 +38,12 @@ class EventStoreConfig<T> {
         this.readOnly = readOnly;
     }
 
-    public void setSerializers(Map<Class<? extends T>, Function<? extends T, byte[]>> serializers) {
-        this.serializers = serializers;
+    public void setSerializer(Class<? extends T> clazz, Function<? extends T, byte[]> serializer) {
+        this.serializers.put(clazz, serializer);
     }
 
-    public void setDeserializers(Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers) {
-        this.deserializers = deserializers;
+    public void setDeserializer(Class<? extends T> clazz, Function<byte[], ? extends T> deserializer) {
+        this.deserializers.put(clazz, deserializer);
     }
 
     public void setDataBlockSize(int dataBlockSize) {

@@ -67,13 +67,27 @@ public class EventStoreFactory<T> {
         return this;
     }
 
+    public EventStoreFactory<T> setDeserializer(Class<? extends T> clazz, Function<byte[], ? extends T> deserializer) {
+        config.setDeserializer(clazz, deserializer);
+        return this;
+    }
+
+    public EventStoreFactory<T> setSerializer(Class<? extends T> clazz, Function<? extends T, byte[]> serializer) {
+        config.setSerializer(clazz, serializer);
+        return this;
+    }
+
     public EventStoreFactory<T> withSerializers(Map<Class<? extends T>, Function<? extends T, byte[]>> serializers) {
-        config.setSerializers(serializers);
+        for (Map.Entry<Class<? extends T>, Function<? extends T, byte[]>> entry : serializers.entrySet()) {
+            config.setSerializer(entry.getKey(), entry.getValue());
+        }
         return this;
     }
 
     public EventStoreFactory<T> andDeserializers(Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers) {
-        config.setDeserializers(deserializers);
+        for (Map.Entry<Class<? extends T>, Function<byte[], ? extends T>> entry : deserializers.entrySet()) {
+            config.setDeserializer(entry.getKey(), entry.getValue());
+        }
         return this;
     }
 

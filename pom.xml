@@ -5,8 +5,8 @@
 
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>de.uniluebeck.itm.eventstore</artifactId>
-    <name>EventStore</name>
-	<version>1.1</version>
+	<name>EventStore</name>
+	<version>1.2-SNAPSHOT</version>
 
 	<dependencies>
         <dependency>

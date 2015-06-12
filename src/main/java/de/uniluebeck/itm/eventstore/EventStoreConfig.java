@@ -1,189 +1,177 @@
 package de.uniluebeck.itm.eventstore;
 
-import com.google.common.base.Function;
 import net.openhft.chronicle.ChronicleConfig;
 import net.openhft.chronicle.VanillaChronicleConfig;
 
 import java.util.ArrayList;
-import java.util.Map;
-
-import static com.google.common.collect.Maps.newHashMap;
+import java.util.function.Function;
 
 class EventStoreConfig<T> {
 
-    private String chronicleBasePath;
-    private boolean readOnly;
-    private boolean monotonic;
-    private boolean cycling;
-    private Map<Class<? extends T>, Function<? extends T, byte[]>> serializers = newHashMap();
-    private Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers = newHashMap();
+	private String chronicleBasePath;
 
-    private VanillaChronicleConfig vanillaChronicleConfig;
-    private ChronicleConfig defaultChronicleConfig;
+	private boolean readOnly;
 
-    public EventStoreConfig() {
+	private boolean monotonic;
 
-        vanillaChronicleConfig = VanillaChronicleConfig.DEFAULT.clone();
-        defaultChronicleConfig = ChronicleConfig.SMALL.clone();
-        readOnly = false;
-        monotonic = true;
-        cycling = false;
-    }
+	private boolean cycling;
 
-    public void setChronicleBasePath(String chronicleBasePath) {
-        this.chronicleBasePath = chronicleBasePath;
-    }
+	private VanillaChronicleConfig vanillaChronicleConfig;
 
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
+	private ChronicleConfig defaultChronicleConfig;
 
-    public void setSerializer(Class<? extends T> clazz, Function<? extends T, byte[]> serializer) {
-        this.serializers.put(clazz, serializer);
-    }
+	private Function<T, byte[]> serializer;
 
-    public void setDeserializer(Class<? extends T> clazz, Function<byte[], ? extends T> deserializer) {
-        this.deserializers.put(clazz, deserializer);
-    }
+	private Function<byte[], T> deserializer;
 
-    public void setDataBlockSize(int dataBlockSize) {
-        vanillaChronicleConfig.dataBlockSize(dataBlockSize);
-        defaultChronicleConfig.dataBlockSize(dataBlockSize);
-    }
+	public EventStoreConfig() {
 
-    public void setMonotonic(boolean monotonic) {
-        this.monotonic = monotonic;
-    }
+		vanillaChronicleConfig = VanillaChronicleConfig.DEFAULT.clone();
+		defaultChronicleConfig = ChronicleConfig.SMALL.clone();
+		readOnly = false;
+		monotonic = true;
+		cycling = false;
+	}
 
+	public void setChronicleBasePath(String chronicleBasePath) {
+		this.chronicleBasePath = chronicleBasePath;
+	}
 
-    public String cycleFormat() {
-        return vanillaChronicleConfig.cycleFormat();
-    }
+	public void setDataBlockSize(int dataBlockSize) {
+		vanillaChronicleConfig.dataBlockSize(dataBlockSize);
+		defaultChronicleConfig.dataBlockSize(dataBlockSize);
+	}
 
-    public void setCycleFormat(String cycleFormat) {
-        cycling = true;
-        vanillaChronicleConfig.cycleFormat(cycleFormat);
-    }
+	public String cycleFormat() {
+		return vanillaChronicleConfig.cycleFormat();
+	}
 
-    public int cycleLength() {
-        return vanillaChronicleConfig.cycleLength();
-    }
+	public void setCycleFormat(String cycleFormat) {
+		cycling = true;
+		vanillaChronicleConfig.cycleFormat(cycleFormat);
+	}
 
-    public void setCycleLength(int cycleLength) {
-        cycling = true;
-        vanillaChronicleConfig.cycleLength(cycleLength);
-    }
+	public int cycleLength() {
+		return vanillaChronicleConfig.cycleLength();
+	}
 
-    public long entriesPerCycle() {
-        return vanillaChronicleConfig.entriesPerCycle();
-    }
+	public void setCycleLength(int cycleLength) {
+		cycling = true;
+		vanillaChronicleConfig.cycleLength(cycleLength);
+	}
 
-    public void setEntriesPerCycle(long entriesPerCycle) {
-        cycling = true;
-        vanillaChronicleConfig.entriesPerCycle(entriesPerCycle);
-    }
+	public long entriesPerCycle() {
+		return vanillaChronicleConfig.entriesPerCycle();
+	}
 
-    public void setVanillaChronicleConfig(VanillaChronicleConfig vanillaChronicleConfig) {
-        cycling = true;
-        this.vanillaChronicleConfig = vanillaChronicleConfig;
-    }
+	public void setEntriesPerCycle(long entriesPerCycle) {
+		cycling = true;
+		vanillaChronicleConfig.entriesPerCycle(entriesPerCycle);
+	}
 
-    public void setDefaultChronicleConfig(ChronicleConfig defaultChronicleConfig) {
-        cycling = false;
-        this.defaultChronicleConfig = defaultChronicleConfig;
-    }
+	public void setVanillaChronicleConfig(VanillaChronicleConfig vanillaChronicleConfig) {
+		cycling = true;
+		this.vanillaChronicleConfig = vanillaChronicleConfig;
+	}
 
-    public String chronicleBasePath() {
-        return chronicleBasePath;
-    }
+	public void setDefaultChronicleConfig(ChronicleConfig defaultChronicleConfig) {
+		cycling = false;
+		this.defaultChronicleConfig = defaultChronicleConfig;
+	}
 
-    public boolean isReadOnly() {
-        return readOnly;
-    }
+	public String chronicleBasePath() {
+		return chronicleBasePath;
+	}
 
-    public boolean isCycling() {
-        return cycling;
-    }
+	public boolean isReadOnly() {
+		return readOnly;
+	}
 
-    public boolean isMonotonic() {
-        return monotonic;
-    }
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
-    public Map<Class<? extends T>, Function<? extends T, byte[]>> serializers() {
-        return serializers;
-    }
+	public boolean isCycling() {
+		return cycling;
+	}
 
-    public Map<Class<? extends T>, Function<byte[], ? extends T>> deserializers() {
-        return deserializers;
-    }
+	public void setCycling(boolean cycling) {
+		this.cycling = cycling;
+	}
 
-    public int dataBlockSize() {
-        return isCycling() ? (int) vanillaChronicleConfig.dataBlockSize() : defaultChronicleConfig.dataBlockSize();
-    }
+	public boolean isMonotonic() {
+		return monotonic;
+	}
 
+	public void setMonotonic(boolean monotonic) {
+		this.monotonic = monotonic;
+	}
 
-    public VanillaChronicleConfig vanillaChronicleConfig() throws IllegalStateException {
-        try {
-            isValid();
+	public Function<T, byte[]> getSerializer() {
+		return serializer;
+	}
 
-            if (!isCycling()) {
-                throw new IllegalArgumentException("Can't create vanilla config for non cycling event store");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
-        }
-        return vanillaChronicleConfig;
-    }
+	public void setSerializer(Function<T, byte[]> serializer) {
+		this.serializer = serializer;
+	}
 
-    public ChronicleConfig defaultChronicleConfig() throws IllegalStateException {
-        try {
-            isValid();
+	public Function<byte[], T> getDeserializer() {
+		return deserializer;
+	}
 
-            if (isCycling()) {
-                throw new IllegalArgumentException("Can't create chronicle config for cycling event store");
-            }
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
-        }
-        return defaultChronicleConfig;
-    }
+	public void setDeserializer(Function<byte[], T> deserializer) {
+		this.deserializer = deserializer;
+	}
 
-    public boolean isValid() throws IllegalArgumentException {
-        ArrayList<String> messages = new ArrayList<String>();
-        if (serializers == null) {
-            messages.add("The serializer map isn't set");
-        }
-        if (deserializers == null) {
-            messages.add("The deserializer map isn't set");
-        }
-        if (serializers != null && deserializers != null) {
-            if (serializers.size() != deserializers.size()) {
-                messages.add("The number of deserializers and serializers is different but must be equal");
-            }
-            if (serializers.size() > 256) {
-                messages.add("THe number oder serializers cannot be bigger than 256");
-            }
-            if (deserializers.size() > 256) {
-                messages.add("THe number oder deserializers cannot be bigger than 256");
-            }
-        }
-        if (chronicleBasePath == null) {
-            messages.add("The event stores base path wasn't set");
-        }
+	public int dataBlockSize() {
+		return isCycling() ? (int) vanillaChronicleConfig.dataBlockSize() : defaultChronicleConfig.dataBlockSize();
+	}
 
-        if (messages.size() == 0) {
-            return true;
-        }
-        StringBuilder messageBuilder = new StringBuilder("The event store configuration is invalid:");
-        for (String message : messages) {
-            messageBuilder.append("\n\t- ");
-            messageBuilder.append(message);
-        }
-        throw new IllegalArgumentException(messageBuilder.toString());
-    }
+	public VanillaChronicleConfig vanillaChronicleConfig() throws IllegalStateException {
+		try {
+			isValid();
 
+			if (!isCycling()) {
+				throw new IllegalArgumentException("Can't create vanilla config for non cycling event store");
+			}
+		} catch (IllegalArgumentException e) {
+			throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
+		}
+		return vanillaChronicleConfig;
+	}
 
-    public void setCycling(boolean cycling) {
-        this.cycling = cycling;
-    }
+	public ChronicleConfig defaultChronicleConfig() throws IllegalStateException {
+		try {
+			isValid();
+
+			if (isCycling()) {
+				throw new IllegalArgumentException("Can't create chronicle config for cycling event store");
+			}
+		} catch (IllegalArgumentException e) {
+			throw new IllegalStateException("Can't create chronicle config from an invalid configuration.", e);
+		}
+		return defaultChronicleConfig;
+	}
+
+	public boolean isValid() throws IllegalArgumentException {
+		ArrayList<String> messages = new ArrayList<String>();
+		if (serializer == null) {
+			messages.add("The serializer isn't set");
+		}
+		if (deserializer == null) {
+			messages.add("The deserializer isn't set");
+		}
+		if (chronicleBasePath == null) {
+			messages.add("The event stores base path wasn't set");
+		}
+		if (messages.size() == 0) {
+			return true;
+		}
+		StringBuilder messageBuilder = new StringBuilder("The event store configuration is invalid:");
+		for (String message : messages) {
+			messageBuilder.append("\n\t- ");
+			messageBuilder.append(message);
+		}
+		throw new IllegalArgumentException(messageBuilder.toString());
+	}
 }

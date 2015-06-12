@@ -1,186 +1,140 @@
 package de.uniluebeck.itm.eventstore;
 
-import com.google.common.base.Function;
 import net.openhft.chronicle.tools.ChronicleTools;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
-import static com.google.common.collect.Maps.newHashMap;
-
 public class ChronicleBasedEventStorePerformanceTest {
 
-    static {
-        BasicConfigurator.configure();
-    }
+	private static final int WRITE_ITERATIONS = 1000000;
+	private static final int READ_ITERATIONS = 1000;
+	private static final Semaphore semaphore = new Semaphore(0);
+	private static Logger log = LoggerFactory.getLogger(ChronicleBasedEventStorePerformanceTest.class);
 
-    private static Logger log = LoggerFactory.getLogger(ChronicleBasedEventStorePerformanceTest.class);
+	static {
+		BasicConfigurator.configure();
+	}
 
-    private static final int WRITE_ITERATIONS = 1000000;
+	public static void main(String... args) {
 
-    private static final int READ_ITERATIONS = 1000;
+		final EventStore<String> store = createEventStore();
 
-    private static final Semaphore semaphore = new Semaphore(0);
+		final long start = System.currentTimeMillis();
+		final Random random = new Random(start);
 
-    public static void main(String... args) {
+		try {
 
-        final EventStore<String> store = createEventStore(createSerializers(), createDeserializers());
+			// writerThread will create 1 million entries and release the semaphore
+			// readerThread will read 1000 times all entries from random start indices
 
-        final long start = System.currentTimeMillis();
-        final Random random = new Random(start);
+			Thread writerThread = createWriterThread(store);
+			Thread readerThread = createReaderThread(store, start, random);
 
-        try {
+			writerThread.start();
+			readerThread.start();
 
-            // writerThread will create 1 million entries and release the semaphore
-            // readerThread will read 1000 times all entries from random start indices
+			semaphore.acquire(2);
 
-            Thread writerThread = createWriterThread(store);
-            Thread readerThread = createReaderThread(store, start, random);
+		} catch (InterruptedException e) {
+			log.warn("Interrupt occurred.", e);
+		}
 
-            writerThread.start();
-            readerThread.start();
+		log.info("Test completed!");
+	}
 
-            semaphore.acquire(2);
+	private static Thread createReaderThread(final EventStore<String> store, final long start, final Random random) {
+		return new Thread(new Runnable() {
+			@Override
+			public void run() {
 
-        } catch (InterruptedException e) {
-            log.warn("Interrupt occurred.", e);
-        }
+				long time = System.nanoTime();
+				long totalEntriesRead = 0;
 
-        log.info("Test completed!");
-    }
+				String dummy = "";
+				for (int i = 0; i < READ_ITERATIONS; i++) {
 
-    private static Thread createReaderThread(final EventStore<String> store, final long start, final Random random) {
-        return new Thread(new Runnable() {
-            @Override
-            public void run() {
+					log.trace("\tread iteration = " + i);
 
-                long time = System.nanoTime();
-                long totalEntriesRead = 0;
+					long randomTimestampInChronicle = start + random.nextInt((int) (System.currentTimeMillis() - start));
 
-                String dummy = "";
-                for (int i = 0; i < READ_ITERATIONS; i++) {
+					Iterator<EventContainer<String>> iterator;
+					try {
+						iterator = store.getEventsFromTimestamp(randomTimestampInChronicle);
+						while (iterator.hasNext()) {
+							totalEntriesRead++;
+							dummy = iterator.next().getEvent();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				time = System.nanoTime() - time;
 
-                    log.trace("\tread iteration = " + i);
+				System.out.println(dummy);
 
-                    long randomTimestampInChronicle = start + random.nextInt((int) (System.currentTimeMillis() - start));
+				double seconds = (double) time / 1000000000;
+				log.info("Reading finished! [TIME: {} ns, ENTRIES: {}, AVG: {} ns, ENTRIES/S: {}]",
+						seconds,
+						totalEntriesRead,
+						time / totalEntriesRead,
+						(double) totalEntriesRead / seconds
+				);
 
-                    Iterator<EventContainer<String>> iterator;
-                    try {
-                        iterator = store.getEventsFromTimestamp(randomTimestampInChronicle);
-                        while (iterator.hasNext()) {
-                            totalEntriesRead++;
-                            dummy = iterator.next().getEvent();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                time = System.nanoTime() - time;
+				semaphore.release();
+			}
+		}, "Reader1"
+		);
+	}
 
-                System.out.println(dummy);
+	private static Thread createWriterThread(final EventStore<String> store) {
+		return new Thread(new Runnable() {
+			@Override
+			public void run() {
 
-                double seconds = (double) time / 1000000000;
-                log.info("Reading finished! [TIME: {} ns, ENTRIES: {}, AVG: {} ns, ENTRIES/S: {}]",
-                        seconds,
-                        totalEntriesRead,
-                        time / totalEntriesRead,
-                        (double) totalEntriesRead / seconds
-                );
+				long time = System.nanoTime();
+				try {
+					for (int i = 0; i < WRITE_ITERATIONS; i++) {
+						log.trace("\twrite iteration = " + i);
+						store.storeEvent("Test" + i);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				time = System.nanoTime() - time;
+				double seconds = (double) time / 1000000000;
+				log.info("Writing finished! [TIME: {} ns, ITERATIONS: {}, AVG: {} ns, ENTRIES/S: {}]",
+						time,
+						WRITE_ITERATIONS,
+						time / WRITE_ITERATIONS,
+						(double) WRITE_ITERATIONS / seconds
+				);
+				semaphore.release();
+			}
+		}, "Writer"
+		);
+	}
 
-                semaphore.release();
-            }
-        }, "Reader1"
-        );
-    }
+	private static EventStore<String> createEventStore() {
+		final String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
+		ChronicleTools.deleteOnExit(basePath);
+		try {
 
-    private static Thread createWriterThread(final EventStore<String> store) {
-        return new Thread(new Runnable() {
-            @Override
-            public void run() {
+			return EventStoreFactory.<String>create()
+					.eventStoreWithBasePath(basePath)
+					.setSerializer(String::getBytes)
+					.setDeserializer(String::new)
+					.build();
 
-                long time = System.nanoTime();
-                try {
-                    for (int i = 0; i < WRITE_ITERATIONS; i++) {
-                        log.trace("\twrite iteration = " + i);
-                        store.storeEvent("Test" + i);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                time = System.nanoTime() - time;
-                double seconds = (double) time / 1000000000;
-                log.info("Writing finished! [TIME: {} ns, ITERATIONS: {}, AVG: {} ns, ENTRIES/S: {}]",
-                        time,
-                        WRITE_ITERATIONS,
-                        time / WRITE_ITERATIONS,
-                        (double) WRITE_ITERATIONS / seconds
-                );
-                semaphore.release();
-            }
-        }, "Writer"
-        );
-    }
-
-    private static EventStore<String> createEventStore(Map<Class<?>, Function<?, byte[]>> serializers, Map<Class<?>, Function<byte[], ?>> deserializers) {
-        final String basePath = System.getProperty("java.io.tmpdir") + "/SimpleChronicle";
-        ChronicleTools.deleteOnExit(basePath);
-        try {
-            //noinspection unchecked
-            return EventStoreFactory.<String>create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).build();
-        } catch (Exception e) {
-            log.error("Exception while creating EventStore: ", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Map<Class<?>, Function<byte[], ?>> createDeserializers() {
-        Map<Class<?>, Function<byte[], ?>> deserializers = newHashMap();
-        deserializers.put(String.class, new Function<byte[], String>() {
-                    @Override
-                    public String apply(byte[] bytes) {
-                        try {
-                            return new String(bytes, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            return null;
-                        }
-                    }
-                }
-        );
-        deserializers.put(BigInteger.class, new Function<byte[], BigInteger>() {
-                    @Override
-                    public BigInteger apply(byte[] bytes) {
-                        return new BigInteger(bytes);
-                    }
-                }
-        );
-        return deserializers;
-    }
-
-    private static Map<Class<?>, Function<?, byte[]>> createSerializers() {
-        Map<Class<?>, Function<?, byte[]>> serializers = newHashMap();
-        serializers.put(String.class, new Function<String, byte[]>() {
-                    @Override
-                    public byte[] apply(String string) {
-                        return string.getBytes();
-                    }
-                }
-        );
-        serializers.put(BigInteger.class, new Function<BigInteger, byte[]>() {
-                    @Override
-                    public byte[] apply(BigInteger o) {
-                        return o.toByteArray();
-                    }
-                }
-        );
-        return serializers;
-    }
+		} catch (Exception e) {
+			log.error("Exception while creating EventStore: ", e);
+			throw new RuntimeException(e);
+		}
+	}
 
 }

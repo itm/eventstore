@@ -1,322 +1,254 @@
 package de.uniluebeck.itm.eventstore;
 
-import com.google.common.base.Function;
-import de.uniluebeck.itm.eventstore.adapter.VanillaChronicleAdapterImpl;
-import net.openhft.chronicle.VanillaChronicleConfig;
 import net.openhft.chronicle.tools.ChronicleTools;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
-//@RunWith(JUnit4.class)
+
+/**
+ * FIXME fix tests when VanillaChronicle is working as expected and un-ignore
+ */
+@RunWith(JUnit4.class)
+@Ignore
 public class VanillaChronicleBasedEventStoreImplTest {
 
-    private EventStore store;
+	private EventStore<String> store;
 
-    @Before
-    public void setUp() throws Exception {
-        Map<Class<?>, Function<?, byte[]>> serializers = new HashMap<Class<?>, Function<?, byte[]>>();
-        serializers.put(String.class, new Function<String, byte[]>() {
-                    @Override
-                    public byte[] apply(String string) {
-                        return string.getBytes();
-                    }
+	@Before
+	public void setUp() throws Exception {
+		String basePath = System.getProperty("java.io.tmpdir") + "/CyclingChronicle";
+		ChronicleTools.deleteOnExit(basePath);
 
-                    @Override
-                    public String toString() {
-                        return "String -> byte[]";
-                    }
-                }
-        );
-        Map<Class<?>, Function<byte[], ?>> deserializers = new HashMap<Class<?>, Function<byte[], ?>>();
-        deserializers.put(String.class, new Function<byte[], String>() {
-                    @Override
-                    public String apply(byte[] bytes) {
-                        try {
-                            return new String(bytes, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            return null;
-                        }
-                    }
+		store = EventStoreFactory.<String>create().eventStoreWithBasePath(basePath)
+				.setSerializer(String::getBytes)
+				.setDeserializer(String::new)
+				.setCycling(true)
+				.build();
+	}
 
-                    @Override
-                    public String toString() {
-                        return "byte[] -> String";
-                    }
-                }
-        );
+	@After
+	public void cleanUp() {
+		try {
+			store.close();
+		} catch (IOException e) {
+			//
+		}
+	}
 
-        serializers.put(BigInteger.class, new Function<BigInteger, byte[]>() {
-                    @Override
-                    public byte[] apply(BigInteger o) {
-                        return o.toByteArray();
-                    }
+	@Test
+	public void testSingleEventReadFromTimestamp() throws Exception {
+		String test = "Test";
+		long start = System.currentTimeMillis();
 
-                    @Override
-                    public String toString() {
-                        return "BigInteger -> byte[]";
-                    }
-                }
-        );
+		store.storeEvent("Test");
 
-        deserializers.put(BigInteger.class, new Function<byte[], BigInteger>() {
-                    @Override
-                    public BigInteger apply(byte[] bytes) {
-                        return new BigInteger(bytes);
-                    }
+		CloseableIterator<EventContainer<String>> iterator = store.getEventsFromTimestamp(start);
+		assertNotNull(iterator);
 
-                    @Override
-                    public String toString() {
-                        return "byte[] -> BigInteger";
-                    }
-                }
-        );
+		assertTrue(iterator.hasNext());
+		EventContainer<?> event = iterator.next();
+		assertNotNull(event);
 
-        String basePath = System.getProperty("java.io.tmpdir") + "/CyclingChronicle";
-        ChronicleTools.deleteOnExit(basePath);
-        //noinspection unchecked
-        VanillaChronicleConfig config = VanillaChronicleConfig.DEFAULT.clone().cycleLength(100,false);
-        store = EventStoreFactory.create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).setCycling(true).build();
-    }
+		assertEquals("The deserialized event is different from original", test, event.getEvent());
 
-    @After
-    public void cleanUp() {
-        try {
-            store.close();
-        } catch (IOException e) {
-            //
-        }
-    }
+		assertTrue(event.getTimestamp() >= start);
+
+		assertFalse(iterator.hasNext());
+		iterator.close();
+
+	}
 
 
-    // FIXME uncomment and fix tests when VanillaChronicle is working as expected
-/*
-    @Test(expected = NotSerializableException.class)
-    public void testInvalidStoreEvent() throws Exception {
-        Object invalid = new Object();
-        //noinspection unchecked
-        store.storeEvent(invalid);
-    }
+	@Test
+	public void testGetEventsFromTimestamp() throws Exception {
+		int iteration = 10000;
+		for (int i = 0; i <= iteration; i++) {
 
-    @Test
-    public void testSingleEventReadFromTimestamp() throws Exception {
-        String test = "Test";
-        long start = System.currentTimeMillis();
-        //noinspection unchecked
-        store.storeEvent("Test");
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getEventsFromTimestamp(start);
-        assertNotNull(iterator);
+			store.storeEvent(String.valueOf(i));
+			assertEquals(i + 1, store.size());
+		}
+		Thread.sleep(1);
+		long timestamp = System.currentTimeMillis();
+		for (int i = 0; i <= iteration; i++) {
 
-        assertTrue(iterator.hasNext());
-        EventContainer<?> event = iterator.next();
-        assertNotNull(event);
-
-        assertEquals("The deserialized event is different from original", test, event.getEvent());
-
-        assertTrue(event.getTimestamp() >= start);
-
-        assertFalse(iterator.hasNext());
-        iterator.close();
-
-    }
+			store.storeEvent("Test" + i);
+		}
 
 
-    @Test
-    public void testGetEventsFromTimestamp() throws Exception {
-        int iteration = 10000;
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(i));
-            assertEquals(i+1, store.size());
-        }
-        Thread.sleep(1);
-        long timestamp = System.currentTimeMillis();
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent("Test" + i);
-        }
+		CloseableIterator<EventContainer<String>> iterator = store.getEventsFromTimestamp(timestamp);
 
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getEventsFromTimestamp(timestamp);
+		int index = 0;
+		while (iterator.hasNext()) {
+			EventContainer<?> event = iterator.next();
+			assertTrue(event.getTimestamp() >= timestamp);
+			assertNotNull(event);
+			assertEquals("Test" + index, event.getEvent());
+			index++;
+		}
+		index--;
+		assertEquals(iteration, index);
+		iterator.close();
+		// Test for reading at end
+		Thread.sleep(1);
 
-        int index = 0;
-        while (iterator.hasNext()) {
-            EventContainer<?> event = iterator.next();
-            assertTrue(event.getTimestamp() >= timestamp);
-            assertNotNull(event);
-            assertEquals("Test" + index, event.getEvent());
-            index++;
-        }
-        index--;
-        assertEquals(iteration, index);
-        iterator.close();
-        // Test for reading at end
-        Thread.sleep(1);
-        //noinspection unchecked
-        iterator = store.getEventsFromTimestamp(System.currentTimeMillis());
+		iterator = store.getEventsFromTimestamp(System.currentTimeMillis());
 
-        assertFalse(iterator.hasNext());
+		assertFalse(iterator.hasNext());
 
-        iterator.close();
-    }
+		iterator.close();
+	}
 
-    @Test
-    public void testGetEventsBetweenTimestamps() throws Exception {
-        int iteration = 10000;
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(i));
-        }
-        Thread.sleep(1);
-        long from = System.currentTimeMillis();
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent("Between" + i);
-        }
-        long to = System.currentTimeMillis();
-        Thread.sleep(1);
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent("After" + i);
-        }
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getEventsBetweenTimestamps(from, to);
-        assertTrue(iterator.hasNext());
-        int index = 0;
-        while (iterator.hasNext()) {
-            EventContainer<?> event = iterator.next();
-            assertNotNull(event);
-            assertTrue(event.getTimestamp() >= from);
-            assertTrue(event.getTimestamp() <= to);
-            assertEquals("Between" + index, event.getEvent());
-            index++;
-        }
-        index--;
-        assertEquals(iteration, index);
-        iterator.close();
+	@Test
+	public void testGetEventsBetweenTimestamps() throws Exception {
+		int iteration = 10000;
+		for (int i = 0; i <= iteration; i++) {
 
-    }
+			store.storeEvent(String.valueOf(i));
+		}
+		Thread.sleep(1);
+		long from = System.currentTimeMillis();
+		for (int i = 0; i <= iteration; i++) {
 
-    @Test
-    public void testReadEmptyStore() throws Exception {
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
-        assertFalse(iterator.hasNext());
-        iterator.close();
-    }
+			store.storeEvent("Between" + i);
+		}
+		long to = System.currentTimeMillis();
+		Thread.sleep(1);
+		for (int i = 0; i <= iteration; i++) {
 
-    @Test
-    public void testGetAllEvents() throws Exception {
-        int iteration = 10000;
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(i));
-        }
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
+			store.storeEvent("After" + i);
+		}
 
-        int index = 0;
-        while (iterator.hasNext()) {
-            EventContainer<?> event = iterator.next();
-            assertNotNull(event);
-            BigInteger next = (BigInteger) event.getEvent();
-            assertEquals(BigInteger.valueOf(index), next);
-            index++;
-        }
-        index--;
-        assertEquals(iteration, index);
-        iterator.close();
-    }
+		CloseableIterator<EventContainer<String>> iterator = store.getEventsBetweenTimestamps(from, to);
+		assertTrue(iterator.hasNext());
+		int index = 0;
+		while (iterator.hasNext()) {
+			EventContainer<?> event = iterator.next();
+			assertNotNull(event);
+			assertTrue(event.getTimestamp() >= from);
+			assertTrue(event.getTimestamp() <= to);
+			assertEquals("Between" + index, event.getEvent());
+			index++;
+		}
+		index--;
+		assertEquals(iteration, index);
+		iterator.close();
 
-    @Test
-    public void testGetAllEventsWithString() throws Exception {
-        String a = "TestA";
-        String b = "TestB";
-        String c = "TestC";
+	}
 
-        //noinspection unchecked
-        store.storeEvent(a);
-        //noinspection unchecked
-        store.storeEvent(b);
-        //noinspection unchecked
-        store.storeEvent(c);
+	@Test
+	public void testReadEmptyStore() throws Exception {
 
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
-        assertNotNull(iterator);
-        assertTrue(iterator.hasNext());
-        EventContainer<?> event = iterator.next();
-        assertNotNull(event);
-        assertEquals(a, event.getEvent());
+		CloseableIterator<EventContainer<String>> iterator = store.getAllEvents();
+		assertFalse(iterator.hasNext());
+		iterator.close();
+	}
 
-        assertTrue(iterator.hasNext());
-        event = iterator.next();
-        assertNotNull(event);
-        assertEquals(b, event.getEvent());
+	@Test
+	public void testGetAllEvents() throws Exception {
+		int iteration = 10000;
+		for (int i = 0; i <= iteration; i++) {
 
-        assertTrue(iterator.hasNext());
-        event = iterator.next();
-        assertNotNull(event);
-        assertEquals(c, event.getEvent());
-        iterator.close();
-    }
+			store.storeEvent(String.valueOf(i));
+		}
 
-    @Test
-    public void testGetAllDifferentType() throws Exception {
-        int iteration = 10000;
-        for (int i = 0; i <= iteration; i++) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(i));
-            //noinspection unchecked
-            store.storeEvent("Test" + i);
-        }
-        testMultipleReaders(iteration);
-        testMultipleReaders(iteration);
+		CloseableIterator<EventContainer<String>> iterator = store.getAllEvents();
 
-    }
+		int index = 0;
+		while (iterator.hasNext()) {
+			EventContainer<?> event = iterator.next();
+			assertNotNull(event);
+			BigInteger next = (BigInteger) event.getEvent();
+			assertEquals(BigInteger.valueOf(index), next);
+			index++;
+		}
+		index--;
+		assertEquals(iteration, index);
+		iterator.close();
+	}
 
-    */
+	@Test
+	public void testGetAllEventsWithString() throws Exception {
+		String a = "TestA";
+		String b = "TestB";
+		String c = "TestC";
 
 
-    /**
-     * Helper method for testGetAllDifferentType.
-     * This method is called multiple times to test different reading operations
-     *
-     * @param iteration the number of iterations
-     * @throws Exception default
-     */
-    private void testMultipleReaders(int iteration) throws Exception {
-        //noinspection unchecked
-        CloseableIterator<EventContainer<?>> iterator = store.getAllEvents();
+		store.storeEvent(a);
 
-        int index = 0;
-        while (iterator.hasNext()) {
-            EventContainer<?> event = iterator.next();
-            assertNotNull(event);
-            BigInteger next = (BigInteger) event.getEvent();
-            assertEquals(BigInteger.valueOf(index), next);
+		store.storeEvent(b);
 
-            assertTrue(iterator.hasNext());
-            event = iterator.next();
-            assertNotNull(event);
-            assertEquals("Test" + index, event.getEvent());
-            index++;
-        }
-        index--;
-        assertEquals(iteration, index);
-        iterator.close();
-    }
+		store.storeEvent(c);
+
+
+		CloseableIterator<EventContainer<String>> iterator = store.getAllEvents();
+		assertNotNull(iterator);
+		assertTrue(iterator.hasNext());
+		EventContainer<?> event = iterator.next();
+		assertNotNull(event);
+		assertEquals(a, event.getEvent());
+
+		assertTrue(iterator.hasNext());
+		event = iterator.next();
+		assertNotNull(event);
+		assertEquals(b, event.getEvent());
+
+		assertTrue(iterator.hasNext());
+		event = iterator.next();
+		assertNotNull(event);
+		assertEquals(c, event.getEvent());
+		iterator.close();
+	}
+
+	@Test
+	public void testGetAllDifferentType() throws Exception {
+		int iteration = 10000;
+		for (int i = 0; i <= iteration; i++) {
+
+			store.storeEvent(String.valueOf(i));
+
+			store.storeEvent("Test" + i);
+		}
+		testMultipleReaders(iteration);
+		testMultipleReaders(iteration);
+
+	}
+
+	/**
+	 * Helper method for testGetAllDifferentType.
+	 * This method is called multiple times to test different reading operations
+	 *
+	 * @param iteration the number of iterations
+	 * @throws Exception default
+	 */
+	private void testMultipleReaders(int iteration) throws Exception {
+
+		CloseableIterator<EventContainer<String>> iterator = store.getAllEvents();
+
+		int index = 0;
+		while (iterator.hasNext()) {
+			EventContainer<?> event = iterator.next();
+			assertNotNull(event);
+			BigInteger next = (BigInteger) event.getEvent();
+			assertEquals(BigInteger.valueOf(index), next);
+
+			assertTrue(iterator.hasNext());
+			event = iterator.next();
+			assertNotNull(event);
+			assertEquals("Test" + index, event.getEvent());
+			index++;
+		}
+		index--;
+		assertEquals(iteration, index);
+		iterator.close();
+	}
 
 }

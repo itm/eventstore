@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.eventstore;
 
-import com.google.common.base.Function;
 import net.openhft.chronicle.tools.ChronicleTools;
 import org.junit.After;
 import org.junit.Before;
@@ -9,160 +8,103 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class NonMonotonicChronicleBasedEventStoreImplTest {
 
-    private EventStore store;
+	private EventStore<String> store;
 
-    @Before
-    public void setUp() throws Exception {
-        Map<Class<?>, Function<?, byte[]>> serializers = new HashMap<Class<?>, Function<?, byte[]>>();
-        serializers.put(String.class, new Function<String, byte[]>() {
-                    @Override
-                    public byte[] apply(String string) {
-                        return string.getBytes();
-                    }
+	@Before
+	public void setUp() throws Exception {
+		String basePath = System.getProperty("java.io.tmpdir") + "/SimpleNonMonotonicChronicle";
+		ChronicleTools.deleteOnExit(basePath);
 
-                    @Override
-                    public String toString() {
-                        return "String -> byte[]";
-                    }
-                }
-        );
-        Map<Class<?>, Function<byte[], ?>> deserializers = new HashMap<Class<?>, Function<byte[], ?>>();
-        deserializers.put(String.class, new Function<byte[], String>() {
-                    @Override
-                    public String apply(byte[] bytes) {
-                        try {
-                            return new String(bytes, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            return null;
-                        }
-                    }
+		store = EventStoreFactory.<String>create().eventStoreWithBasePath(basePath)
+				.setSerializer(String::getBytes)
+				.setDeserializer(String::new)
+				.havingMonotonicEventOrder(false)
+				.build();
+	}
 
-                    @Override
-                    public String toString() {
-                        return "byte[] -> String";
-                    }
-                }
-        );
+	@After
+	public void cleanUp() {
+		try {
+			store.close();
+		} catch (IOException e) {
+			//
+		}
+	}
 
-        serializers.put(BigInteger.class, new Function<BigInteger, byte[]>() {
-                    @Override
-                    public byte[] apply(BigInteger o) {
-                        return o.toByteArray();
-                    }
+	@Test
+	public void testEventsFoundIfOutOfOrder() throws Exception {
+		long from = 1;
+		long to = 20;
+		int[] values = {1, 2, 3, 100, 110, 70, 75, 5, 9, 20, 30};
 
-                    @Override
-                    public String toString() {
-                        return "BigInteger -> byte[]";
-                    }
-                }
-        );
+		for (int value : values) {
 
-        deserializers.put(BigInteger.class, new Function<byte[], BigInteger>() {
-                    @Override
-                    public BigInteger apply(byte[] bytes) {
-                        return new BigInteger(bytes);
-                    }
+			store.storeEvent(String.valueOf(value), value);
+		}
 
-                    @Override
-                    public String toString() {
-                        return "byte[] -> BigInteger";
-                    }
-                }
-        );
 
-        String basePath = System.getProperty("java.io.tmpdir") + "/SimpleNonMonotonicChronicle";
-        ChronicleTools.deleteOnExit(basePath);
-        //noinspection unchecked
-        store = EventStoreFactory.create().eventStoreWithBasePath(basePath).withSerializers(serializers).andDeserializers(deserializers).havingMonotonicEventOrder(false).build();
-    }
+		CloseableIterator<EventContainer<String>> iterator = store.getEventsBetweenTimestamps(from, to);
 
-    @After
-    public void cleanUp() {
-        try {
-            store.close();
-        } catch (IOException e) {
-            //
-        }
-    }
+		for (int expected : values) {
+			if (expected > to) {
+				continue;
+			}
+			assertTrue(iterator.hasNext());
+			EventContainer container = iterator.next();
+			assertNotNull(container);
+			assertEquals(expected, container.getTimestamp());
+		}
 
-    @Test
-    public void testEventsFoundIfOutOfOrder() throws Exception {
-        long from = 1;
-        long to = 20;
-        int[] values = {1, 2, 3, 100, 110, 70, 75, 5, 9, 20, 30};
+		assertFalse(iterator.hasNext());
+		iterator.close();
+	}
 
-        for (int value : values) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(value), value);
-        }
+	@Test
+	public void testSizeAndEmpty() throws Exception {
+		assertEquals(0, store.size());
+		assertTrue(store.isEmpty());
 
-        //noinspection unchecked
-        CloseableIterator<EventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
+		for (int i = 0; i < 100; i++) {
 
-        for (int expected : values) {
-            if (expected > to) {
-                continue;
-            }
-            assertTrue(iterator.hasNext());
-            EventContainer container = iterator.next();
-            assertNotNull(container);
-            assertEquals(expected, container.getTimestamp());
-        }
+			store.storeEvent(String.valueOf(i));
+			assertEquals(i + 1, store.size());
+		}
+		assertFalse(store.isEmpty());
+	}
 
-        assertFalse(iterator.hasNext());
-        iterator.close();
-    }
+	@Test
+	public void testEventsFoundIfInOrder() throws Exception {
+		long from = 1;
+		long to = 20;
+		int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 17, 17, 20, 50, 70};
 
-    @Test
-    public void testSizeAndEmpty() throws Exception {
-        assertEquals(0, store.size());
-        assertTrue(store.isEmpty());
+		for (int value : values) {
 
-        for (int i = 0; i < 100; i++) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(i));
-            assertEquals(i + 1, store.size());
-        }
-        assertFalse(store.isEmpty());
-    }
+			store.storeEvent(String.valueOf(value), value);
+		}
 
-    @Test
-    public void testEventsFoundIfInOrder() throws Exception {
-        long from = 1;
-        long to = 20;
-        int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 17, 17, 20, 50, 70};
 
-        for (int value : values) {
-            //noinspection unchecked
-            store.storeEvent(BigInteger.valueOf(value), value);
-        }
+		CloseableIterator<EventContainer<String>> iterator = store.getEventsBetweenTimestamps(from, to);
 
-        //noinspection unchecked
-        CloseableIterator<EventContainer> iterator = store.getEventsBetweenTimestamps(from, to);
+		for (int expected : values) {
+			if (expected > to) {
+				continue;
+			}
+			assertTrue(iterator.hasNext());
+			EventContainer container = iterator.next();
+			assertNotNull(container);
+			assertEquals(expected, container.getTimestamp());
+		}
 
-        for (int expected : values) {
-            if (expected > to) {
-                continue;
-            }
-            assertTrue(iterator.hasNext());
-            EventContainer container = iterator.next();
-            assertNotNull(container);
-            assertEquals(expected, container.getTimestamp());
-        }
-
-        assertFalse(iterator.hasNext());
-        iterator.close();
-    }
+		assertFalse(iterator.hasNext());
+		iterator.close();
+	}
 
 
 }

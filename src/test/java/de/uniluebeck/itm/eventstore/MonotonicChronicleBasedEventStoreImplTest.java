@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import static org.junit.Assert.*;
 
@@ -218,10 +217,10 @@ public class MonotonicChronicleBasedEventStoreImplTest {
 
 		int index = 0;
 		while (iterator.hasNext()) {
-			EventContainer<?> event = iterator.next();
+			EventContainer<String> event = iterator.next();
 			assertNotNull(event);
-			BigInteger next = (BigInteger) event.getEvent();
-			assertEquals(BigInteger.valueOf(index), next);
+			String next = event.getEvent();
+			assertEquals(String.valueOf(index), next);
 
 			assertTrue(iterator.hasNext());
 			event = iterator.next();
